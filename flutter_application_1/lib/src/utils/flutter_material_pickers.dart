@@ -6,7 +6,7 @@ library flutter_material_pickers;
 
 /// Helpers
 
-export 'package:Smart_Medicine_Box/helpers/show_scroll_picker.dart';
+export 'package:Smart_Medicine_Box/src/utils/helpers/show_scroll_picker.dart';
 
 // Constants
 const double kPickerHeaderPortraitHeight = 80.0;

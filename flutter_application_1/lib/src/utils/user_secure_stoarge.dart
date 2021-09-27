@@ -5,6 +5,8 @@ class UserSecureStorage {
 
   static const _keyToken = 'usertoken';
 
+  static const _keydeviceToken = 'devicetoken';
+
   static const _keyUserId = 'userid';
 
   static const _keyBottleId = 'bottleid';
@@ -18,6 +20,12 @@ class UserSecureStorage {
 
   static Future<String> getUserID() async =>
       await _storage.read(key: _keyUserId);
+
+  static Future setDeviceToken(String devicetoken) async =>
+      await _storage.write(key: _keydeviceToken, value: devicetoken);
+
+  static Future<String> getDeviceToken() async =>
+      await _storage.read(key: _keydeviceToken);
 
   static Future setUserToken(String userToken) async =>
       await _storage.write(key: _keyToken, value: userToken);

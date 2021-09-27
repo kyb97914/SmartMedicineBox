@@ -6,8 +6,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../utils/user_secure_stoarge.dart';
 import 'HubList.dart';
-import 'RegsiterHub.dart';
 import '../../models/User.dart';
+
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class SignInPage extends StatefulWidget {
   @override
@@ -23,57 +28,10 @@ class _SignInPageState extends State<SignInPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  User user;
+  LocalUser user;
   List<int> _hublist = new List<int>(); //허브이름을 만들어야 할 것 같은데 임시로 허브 id만 고르게 함
 
   //Login 함수
-  Future<String> login(String _email, String _password) async {
-    http.Response response = await http.post(
-      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'auth/login'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(
-        {
-          'userId': _email,
-          'password': _password,
-        },
-      ),
-    );
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
-      user = User.fromJson(data);
-      UserSecureStorage.setUserToken(user.token);
-      UserSecureStorage.setUserId(user.userId);
-      return "로그인 성공";
-    } else if (response.statusCode == 400) {
-      return "올바르지 않은 아이디 및 패스워드";
-    } else {
-      return "존재하지 않는 아이디 이거나 비밀번호가 불일치 합니다.";
-    }
-  }
-
-  //Get Hub List 함수
-  Future<String> getHubList() async {
-    String usertoken = await UserSecureStorage.getUserToken();
-    http.Response response = await http.get(
-      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
-      headers: {"authorization": usertoken},
-    );
-    List<dynamic> values = new List<dynamic>();
-    if (_hublist.length != 0) {
-      _hublist.clear();
-    }
-    if (response.statusCode == 200) {
-      values = json.decode(response.body);
-      for (int i = 0; i < values.length; i++) {
-        _hublist.add(values[i]['hubId']);
-      }
-      return "get완료";
-    } else if (response.statusCode == 404) {
-      return "Not Found";
-    } else {
-      return "Error";
-    }
-  }
 
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -100,7 +58,7 @@ class _SignInPageState extends State<SignInPage> {
                     children: <Widget>[
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
@@ -189,12 +147,12 @@ class _SignInPageState extends State<SignInPage> {
                               ],
                             ),
                           ),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
                                 width: size.width * 0.8,
-                                height: 46,
+                                height: size.height * 0.07,
                                 child: RaisedButton(
                                   color: Color(0xff1674f6),
                                   child: Text("로그인",
@@ -207,7 +165,8 @@ class _SignInPageState extends State<SignInPage> {
                                   onPressed: () async {
                                     String saveMessage = await login(
                                         emailController.text,
-                                        passwordController.text);
+                                        passwordController.text,
+                                        user);
                                     if (emailController.text.isEmpty ||
                                         passwordController.text.isEmpty) {
                                       showDialog(
@@ -229,29 +188,36 @@ class _SignInPageState extends State<SignInPage> {
                                           });
                                     } else {
                                       if (saveMessage == "로그인 성공") {
-                                        var result = await getHubList();
-                                        if (result == "Not Found") {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    RegisterHub(modify_hub: 0),
-                                              ));
-                                        } else if (result == "get완료") {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  HubList(hublist: _hublist),
-                                            ),
-                                          );
-                                        } else {}
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                HubList(hublist: _hublist),
+                                          ),
+                                        );
                                       } else {
                                         print('Error');
                                       }
                                     }
                                   },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                ),
+                              ),
+                              SizedBox(height: size.height * 0.03),
+                              Container(
+                                width: size.width * 0.8,
+                                height: size.height * 0.07,
+                                child: RaisedButton(
+                                  color: Color(0xff1674f6),
+                                  child: Text("구글 로그인",
+                                      textScaleFactor: 1.0,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontFamily: 'Noto',
+                                          fontWeight: FontWeight.bold)),
+                                  onPressed: () async {},
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20)),
                                 ),
@@ -269,5 +235,29 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ),
     );
+  }
+}
+
+Future<String> login(String _email, String _password, LocalUser user) async {
+  http.Response response = await http.post(
+    Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'auth/login'),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode(
+      {
+        'userId': _email,
+        'password': _password,
+      },
+    ),
+  );
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    user = LocalUser.fromJson(data);
+    UserSecureStorage.setUserToken(user.token);
+    UserSecureStorage.setUserId(user.userId);
+    return "로그인 성공";
+  } else if (response.statusCode == 400) {
+    return "올바르지 않은 아이디 및 패스워드";
+  } else {
+    return "존재하지 않는 아이디 이거나 비밀번호가 불일치 합니다.";
   }
 }

@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="147dc7b8-1063-4e12-b6bb-adb3717b8080" name="Default Changelist" comment="" />
+    <list default="true" id="147dc7b8-1063-4e12-b6bb-adb3717b8080" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/frontend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/frontend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/dialogs/responsive_dialog.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/dialogs/scroll_picker_dialog.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/flutter_material_pickers.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/helpers/show_scroll_picker.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/interfaces/common_dialog_properties.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/pickers/scroll_picker.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Homepage.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Main/MainPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Main/MainPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Register/SignInPage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Register/SignInPage.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Register/SignUpLocal.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/lib/src/screens/Register/SignUpLocal.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_application_1/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_application_1/pubspec.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,10 +33,12 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/flutter_application_1" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/flutter_application_1/android" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -37,10 +54,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="740" y="278" key="FileChooserDialogImpl" timestamp="1629284197342">
+    <state x="740" y="278" key="FileChooserDialogImpl" timestamp="1630738927168">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="278" key="FileChooserDialogImpl/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1629284197342" />
+    <state x="740" y="278" key="FileChooserDialogImpl/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1630738927168" />
     <state x="440" y="98" key="SettingsEditor" timestamp="1629284186082">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

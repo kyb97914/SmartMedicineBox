@@ -1,11 +1,11 @@
-class User {
+class LocalUser {
   final String userId;
   final String token;
 
-  User({this.userId, this.token});
+  LocalUser({this.userId, this.token});
 
-  factory User.fromJson(Map<String, dynamic> parsedJson) {
-    return User(
+  factory LocalUser.fromJson(Map<String, dynamic> parsedJson) {
+    return LocalUser(
       userId: parsedJson['userId'],
       token: parsedJson['token'],
     );

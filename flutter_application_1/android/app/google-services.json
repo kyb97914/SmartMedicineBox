@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "515101468848",
-    "project_id": "smartmedicinebox-e7163",
-    "storage_bucket": "smartmedicinebox-e7163.appspot.com"
+    "project_number": "595642193297",
+    "project_id": "smartmedicinebox-549a3",
+    "storage_bucket": "smartmedicinebox-549a3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:515101468848:android:ca3083a7ae6e9e83cff375",
+        "mobilesdk_app_id": "1:595642193297:android:c3fe1110542a06746eb630",
         "android_client_info": {
           "package_name": "com.example.Smart_Medicine_Box"
         }
       },
       "oauth_client": [
         {
-          "client_id": "515101468848-a5p2ifirr30l80fcetedid91vrcj1v8h.apps.googleusercontent.com",
+          "client_id": "595642193297-qb5p8kv00cbpailekfaqqcvnpq2k00kt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.Smart_Medicine_Box",
+            "certificate_hash": "1d92e32a2fa5f3771298b2bed5f73517d3bfc680"
+          }
+        },
+        {
+          "client_id": "595642193297-t7brg1i7u79guihb4hndrq5do49gmu52.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCkglFpl-CsPetG2C--9BZjiXILK3-TZT0"
+          "current_key": "AIzaSyDlfbinegDbDpCBj5eA9BavLmCoqsrVdhY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "515101468848-a5p2ifirr30l80fcetedid91vrcj1v8h.apps.googleusercontent.com",
+              "client_id": "595642193297-t7brg1i7u79guihb4hndrq5do49gmu52.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
