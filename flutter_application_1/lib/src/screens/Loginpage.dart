@@ -147,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
+                      SizedBox(height: size.height * 0.02),
                       AnimatedOpacity(
                         opacity: 1,
                         duration: Duration(milliseconds: 500),
@@ -158,8 +159,9 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: size.height * 0.03),
                 Container(
-                  height: size.height * 0.3,
+                  height: size.height * 0.2,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,12 +198,14 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                      SizedBox(height: size.height * 0.03),
                       GestureDetector(
                         child: Container(
                           width: size.width * 0.8,
-                          padding: EdgeInsets.all(0),
-                          child: OutlineButton(
-                            padding: EdgeInsets.fromLTRB(0, 25, 0, 15),
+                          height: 46,
+                          margin: EdgeInsets.only(bottom: 0),
+                          child: FlatButton(
+                            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -214,13 +218,17 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               '회원 가입',
                               textScaleFactor: 1.0,
-                              style:
-                                  TextStyle(fontSize: 16, fontFamily: 'Noto'),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Noto',
+                                  fontWeight: FontWeight.bold),
                             ),
-                            textColor: Colors.black,
-                            highlightedBorderColor: highlightColor,
-                            borderSide: BorderSide.none,
+                            color: Color(0xffffffff),
                             shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    color: Colors.black,
+                                    width: 1.5,
+                                    style: BorderStyle.solid),
                                 borderRadius: BorderRadius.circular(50)),
                           ),
                         ),

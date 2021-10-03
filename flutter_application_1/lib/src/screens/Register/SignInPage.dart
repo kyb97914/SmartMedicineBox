@@ -14,6 +14,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
+var _socialLoginInfo = {
+  "email": '',
+  "type": '',
+  "accesstoken": '',
+};
+
+Future<UserCredential> signInWithGoogle() async {
+  final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+  final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+  );
+  UserCredential authResult = await _auth.signInWithCredential(credential);
+  User user = authResult.user;
+  print('AccessToken: ' + googleAuth.accessToken);
+  print('IDTOKEN: ' + googleAuth.idToken);
+  print('email: ' + user.email);
+  _socialLoginInfo['email'] = user.email;
+  _socialLoginInfo['accessToken'] = googleAuth.accessToken;
+  _socialLoginInfo['type'] = 'google';
+  print(googleSignIn.currentUser);
+  return await FirebaseAuth.instance.signInWithCredential(credential);
+}
+
+Future<void> _handleSignOut() async {
+  googleSignIn.disconnect();
+}
+
 class SignInPage extends StatefulWidget {
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -217,7 +246,29 @@ class _SignInPageState extends State<SignInPage> {
                                           fontSize: 16,
                                           fontFamily: 'Noto',
                                           fontWeight: FontWeight.bold)),
-                                  onPressed: () async {},
+                                  onPressed: () async {
+                                    signInWithGoogle();
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                ),
+                              ),
+                              SizedBox(height: size.height * 0.03),
+                              Container(
+                                width: size.width * 0.8,
+                                height: size.height * 0.07,
+                                child: RaisedButton(
+                                  color: Color(0xff1674f6),
+                                  child: Text("구글 로그dkdnt",
+                                      textScaleFactor: 1.0,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontFamily: 'Noto',
+                                          fontWeight: FontWeight.bold)),
+                                  onPressed: () async {
+                                    _handleSignOut();
+                                  },
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20)),
                                 ),
