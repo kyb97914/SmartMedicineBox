@@ -8,6 +8,8 @@ import '../utils/user_secure_stoarge.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
+import 'Components/background.dart';
+import 'Components/RoundedButton.dart';
 
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -40,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
     if (Platform.isIOS) iOS_Permission();
 
     _firebaseMessaging.getToken().then((token) {
-      print('token:' + token);
       UserSecureStorage.setDeviceToken(token);
     });
 
@@ -115,8 +116,61 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
     return Scaffold(
+      body: Background(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: size.height * 0.05),
+              Text(
+                'SMART MEDICINE BOX',
+                textScaleFactor: 1.0,
+                style: TextStyle(
+                    color: Color(0xff004ca2),
+                    fontSize: 30,
+                    fontFamily: 'Noto',
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: size.height * 0.05),
+              Image.asset('images/main_logo.png', width: 200, height: 250),
+              SizedBox(height: size.height * 0.05),
+              RoundedButton(
+                text: "로그인",
+                color: Colors.blue.shade600,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => SignInPage(),
+                    ),
+                  );
+                },
+              ),
+              RoundedButton(
+                text: "회원가입",
+                color: Colors.blue.shade300,
+                textColor: Colors.white,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => SignUpLocal(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/*
+
+return Scaffold(
       body: GestureDetector(
         child: Container(
           color: Colors.white,
@@ -242,6 +296,4 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       backgroundColor: bgColor,
-    );
-  }
-}
+    ); */

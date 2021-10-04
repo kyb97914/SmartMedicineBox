@@ -45,6 +45,8 @@ dependencies:
   firebase_messaging: ^7.0.3
   firebase_auth: ^0.18.4+1
   flutter_local_notifications: ^4.0.1+2
+  flutter_naver_login: ^1.2.0
+  flutter_svg: ^0.18.1
 
 dev_dependencies:
   flutter_test:

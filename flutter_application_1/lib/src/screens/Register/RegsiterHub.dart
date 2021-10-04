@@ -35,7 +35,6 @@ class _RegisterHubState extends State<RegisterHub> {
           'host': medicineHubHostController.text,
           'port': medicineHubPortController.text,
         }));
-    print(hubresponse.statusCode);
     if (hubresponse.statusCode == 201) {
       return "허브 등록 완료";
     } else if (hubresponse.statusCode == 409) {
@@ -122,8 +121,6 @@ class _RegisterHubState extends State<RegisterHub> {
             child: RaisedButton(
               onPressed: () async {
                 String saveMessage = await registerhub_Validate();
-                print(saveMessage);
-                print(widget.modify_hub);
                 if (saveMessage == "허브 등록 완료" && widget.modify_hub == 0) {
                   UserSecureStorage.setHubId(medicineHubIDController.text);
                   Navigator.push(

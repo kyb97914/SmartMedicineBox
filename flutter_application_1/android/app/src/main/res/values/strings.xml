@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- naver -->
+    <string name="client_id">xePb5fXpqQ2bKyacvWkX</string>
+    <string name="client_secret">7YRCgiCu3b</string>
+    <string name="client_name">smartbox</string>
+</resources>

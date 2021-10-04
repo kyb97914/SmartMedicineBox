@@ -106,8 +106,6 @@ class _RegisterBottleState extends State<RegisterBottle> {
             child: RaisedButton(
               onPressed: () async {
                 String saveMessage = await registerhub_Validate();
-                print(saveMessage);
-                print(widget.modify_bottle);
                 if (saveMessage == "등록 완료" && widget.modify_bottle == false) {
                   showDialog(
                     context: context,
