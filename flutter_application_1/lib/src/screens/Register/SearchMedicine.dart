@@ -21,23 +21,21 @@ class _SearchMedicineState extends State<SearchMedicine> {
 
   Future<String> postMeicineList() async {
     String usertoken = await UserSecureStorage.getUserToken();
-    http.Response response = await http.post(
-        Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'medicine'),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": usertoken
-        },
-        body: jsonEncode({
-          'name': medicineNameController.text,
-          'company': medicineCompanyController.text,
-        }));
-
+    print(Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'medicine'));
+    http.Response response = await http.get(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] +
+          'medicine?keyword=' +
+          medicineNameController.text),
+      headers: {"Content-Type": "application/json", "authorization": usertoken},
+    );
+    print(response.body);
     if (_medicineList.length != 0) {
       _medicineList.clear();
     }
     if (response.statusCode == 200) {
       List<dynamic> values = new List<dynamic>();
-      values = json.decode(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map["medicineList"];
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _medicineList.add(Medicine.fromJson(map));

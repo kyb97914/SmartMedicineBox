@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:Smart_Medicine_Box/src/screens/Register/SignInPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -95,6 +96,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
         },
       ),
     );
+    print(response.statusCode);
     if (response.statusCode == 201) {
       return "정보 입력 완료";
     } else {
@@ -196,7 +198,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             Icons.lock,
                             color: Colors.black,
                           ),
-                          hintText: "Your Password",
+                          hintText: "비밀 번호 입력",
                           border: InputBorder.none,
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -246,7 +248,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             Icons.lock,
                             color: Colors.black,
                           ),
-                          hintText: "Password Check",
+                          hintText: "비밀 번호 확인 ",
                           border: InputBorder.none,
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -301,7 +303,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    LoginPage()));
+                                    SignInPage()));
                       },
                     ),
                     OrDivider(),
@@ -332,7 +334,8 @@ class _SignUpLocalState extends State<SignUpLocal> {
                     )
                   ],
                 ),
-              ))
+              ),
+            )
           : GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
               child: Background(
@@ -447,10 +450,48 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             '-' +
                             birthdate.substring(6, 8);
                         String saveMessage = await signup_Validate();
+                        if (saveMessage == "정보 입력 완료") {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: new Text('회원 가입'),
+                                  content: new Text('회원 가입이 완료 되었습니다.'),
+                                  actions: <Widget>[
+                                    new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          LoginPage()));
+                                        })
+                                  ],
+                                );
+                              });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: new Text('회원 가입 오류'),
+                                  content: new Text('정확한 이메일, 비밀번호를 입력해 주세요.'),
+                                  actions: <Widget>[
+                                    new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        })
+                                  ],
+                                );
+                              });
+                        }
                       },
                     ),
                     RoundedButton(
-                      text: "Back",
+                      text: "이전",
                       press: () {
                         setState(() {
                           _nextpage = false;
@@ -465,7 +506,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    LoginPage()));
+                                    SignInPage()));
                       },
                     ),
                     OrDivider(),

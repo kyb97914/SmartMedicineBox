@@ -47,6 +47,11 @@ dependencies:
   flutter_local_notifications: ^4.0.1+2
   flutter_naver_login: ^1.2.0
   flutter_svg: ^0.18.1
+  kakao_flutter_sdk: ^0.5.2
+  dio: ^3.0.9
+  json_serializable : ^3.3.0
+  platform: ^2.2.1
+  package_info: ^0.4.0+18 
 
 dev_dependencies:
   flutter_test:

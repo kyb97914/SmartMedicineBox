@@ -6,7 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'RegisterBottle.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../utils/user_secure_stoarge.dart';
+import '../Components/RoundedButton.dart';
+import '../Components/background.dart';
 
 class RegisterHub extends StatefulWidget {
   final int modify_hub;
@@ -17,7 +20,6 @@ class RegisterHub extends StatefulWidget {
 }
 
 class _RegisterHubState extends State<RegisterHub> {
-  final medicineBottleIDController = TextEditingController();
   final medicineHubIDController = TextEditingController();
   final medicineHubPortController = TextEditingController();
   final medicineHubHostController = TextEditingController();
@@ -51,125 +53,138 @@ class _RegisterHubState extends State<RegisterHub> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 25, 20, 0),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  '허브 등록',
-                  textScaleFactor: 1.0,
-                  style: TextStyle(fontSize: 34),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  'SmartMedicine 허브 등록',
-                  textScaleFactor: 1.0,
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
-            ),
-          ),
-          MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-            child: Container(
-              height: size.height * 0.6,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextFormField(
-                      keyboardType: TextInputType.text,
-                      controller: medicineHubIDController,
-                      decoration: InputDecoration(
-                        labelText: '허브 ID',
-                        helperText: '현자 등록하시는 허브의 고유 번호를 입력하세요',
-                      ),
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.text,
-                      controller: medicineHubHostController,
-                      decoration: InputDecoration(
-                        labelText: 'Host',
-                        helperText: '현재 사용하시는 허브의 HOST를 입력하세요',
-                      ),
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.text,
-                      controller: medicineHubPortController,
-                      decoration: InputDecoration(
-                        labelText: 'Port',
-                        helperText: '현재 사용하시는 허브의 PORT를 입력하세요',
-                      ),
-                    ),
-                  ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Background(
+          child: ListView(
+            padding: const EdgeInsets.all(40),
+            children: <Widget>[
+              SizedBox(
+                height: size.height * 0.05,
+              ),
+              Center(
+                child: Text(
+                  "허브 등록",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ),
-            ),
-          ),
-          Container(
-            height: 80,
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-            child: RaisedButton(
-              onPressed: () async {
-                String saveMessage = await registerhub_Validate();
-                if (saveMessage == "허브 등록 완료" && widget.modify_hub == 0) {
-                  UserSecureStorage.setHubId(medicineHubIDController.text);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => RegisterBottle(
-                        hubid: medicineHubIDController.text,
-                        modify_bottle: false,
-                      ),
-                    ),
-                  );
-                } else if (saveMessage == "허브 등록 완료" &&
-                    widget.modify_hub == 1) {
-                  Navigator.of(context).pop();
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: new Text('오류'),
-                        content: new Text(saveMessage),
-                        actions: <Widget>[
-                          new FlatButton(
-                            child: new Text('close'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(18.0),
-                  side: BorderSide(color: Colors.blue)),
-              color: Color(0xff1674f6),
-              child: Text(
-                '허브 등록 ',
-                textScaleFactor: 1.0,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+              SizedBox(
+                height: size.height * 0.03,
               ),
-            ),
-          )
-        ],
+              SvgPicture.asset(
+                "images/registerhub.svg",
+                height: size.height * 0.2,
+              ),
+              SizedBox(
+                height: size.height * 0.03,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: TextField(
+                  controller: medicineHubHostController,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.device_hub,
+                      color: Colors.black,
+                    ),
+                    hintText: "허브 ID 입력",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: TextField(
+                  controller: medicineHubIDController,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.device_hub,
+                      color: Colors.black,
+                    ),
+                    hintText: "허브 Host 입력",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: TextField(
+                  controller: medicineHubPortController,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.device_hub,
+                      color: Colors.black,
+                    ),
+                    hintText: "허브 PORT 입력",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              RoundedButton(
+                text: "허브 등록",
+                press: () async {
+                  String saveMessage = await registerhub_Validate();
+                  print(saveMessage);
+                  print(widget.modify_hub);
+                  if (saveMessage == "허브 등록 완료" && widget.modify_hub == 0) {
+                    UserSecureStorage.setHubId(medicineHubIDController.text);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => RegisterBottle(
+                          hubid: medicineHubIDController.text,
+                          modify_bottle: false,
+                        ),
+                      ),
+                    );
+                  } else if (saveMessage == "허브 등록 완료" &&
+                      widget.modify_hub == 1) {
+                    Navigator.of(context).pop();
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: new Text('오류'),
+                          content: new Text(saveMessage),
+                          actions: <Widget>[
+                            new FlatButton(
+                              child: new Text('close'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

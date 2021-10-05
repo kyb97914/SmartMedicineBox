@@ -56,10 +56,12 @@ class _HubListState extends State<HubList> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
       headers: {"authorization": usertoken},
     );
+    print(response.body);
     List<dynamic> values = new List<dynamic>();
     if (_hublist.length != 0) {
       _hublist.clear();
     }
+    print(response.statusCode);
     if (response.statusCode == 200) {
       values = json.decode(response.body);
       for (int i = 0; i < values.length; i++) {
@@ -104,6 +106,7 @@ class _HubListState extends State<HubList> {
                 ),
               );
             } else {
+              print('data:' + snapshot.data);
               return Container(
                 height: size.height,
                 child: Column(
@@ -151,15 +154,17 @@ class _HubListState extends State<HubList> {
                                 //허브 id로 가져와서 있으면 바로 넘기기
                                 var result =
                                     await getBottleList(_hublist[index]);
+                                print(result);
                                 if (result == "GET") {
                                   UserSecureStorage.setHubId(
                                       _hublist[index].toString());
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            BottleList(),
-                                      ));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          BottleList(),
+                                    ),
+                                  );
                                 } else if (result == "Not Found") {
                                   showDialog(
                                     context: context,
@@ -169,18 +174,20 @@ class _HubListState extends State<HubList> {
                                         content: new Text('등록된 약병이 없습니다.'),
                                         actions: <Widget>[
                                           new FlatButton(
-                                              child: new Text('등록'),
-                                              onPressed: () {
-                                                UserSecureStorage.setHubId(
-                                                    _hublist[index].toString());
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
+                                            child: new Text('등록'),
+                                            onPressed: () {
+                                              UserSecureStorage.setHubId(
+                                                  _hublist[index].toString());
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
                                                           RegisterBottle(),
-                                                    ));
-                                              })
+                                                ),
+                                              );
+                                            },
+                                          )
                                         ],
                                       );
                                     },
