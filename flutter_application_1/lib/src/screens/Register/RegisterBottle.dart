@@ -102,6 +102,25 @@ class _RegisterBottleState extends State<RegisterBottle> {
                   ),
                 ),
               ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 15,
+                ),
+                height: size.height * 0.04,
+                child: Text(
+                  '약병 뒷편의 ID를 입력해 주세요',
+                  textScaleFactor: 1.0,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                    fontFamily: 'Noto',
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
               RoundedButton(
                 text: "약병 등록",
                 press: () async {

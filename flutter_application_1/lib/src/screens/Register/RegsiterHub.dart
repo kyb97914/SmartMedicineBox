@@ -60,7 +60,7 @@ class _RegisterHubState extends State<RegisterHub> {
             padding: const EdgeInsets.all(40),
             children: <Widget>[
               SizedBox(
-                height: size.height * 0.05,
+                height: size.height * 0.03,
               ),
               Center(
                 child: Text(
@@ -100,6 +100,22 @@ class _RegisterHubState extends State<RegisterHub> {
                 ),
               ),
               Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 15,
+                ),
+                height: size.height * 0.04,
+                child: Text(
+                  '허브 뒷편의 ID를 입력해 주세요',
+                  textScaleFactor: 1.0,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                    fontFamily: 'Noto',
+                  ),
+                ),
+              ),
+              Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 width: size.width * 0.8,
@@ -117,6 +133,22 @@ class _RegisterHubState extends State<RegisterHub> {
                     ),
                     hintText: "허브 Host 입력",
                     border: InputBorder.none,
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 15,
+                ),
+                height: size.height * 0.04,
+                child: Text(
+                  '허브 뒷편의 Host번호를 입력해 주세요',
+                  textScaleFactor: 1.0,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                    fontFamily: 'Noto',
                   ),
                 ),
               ),
@@ -140,6 +172,25 @@ class _RegisterHubState extends State<RegisterHub> {
                     border: InputBorder.none,
                   ),
                 ),
+              ),
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 15,
+                ),
+                height: size.height * 0.04,
+                child: Text(
+                  '허브 뒷편의 PORT번호를 입력해 주세요',
+                  textScaleFactor: 1.0,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 14,
+                    fontFamily: 'Noto',
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.01,
               ),
               RoundedButton(
                 text: "허브 등록",
