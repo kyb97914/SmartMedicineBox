@@ -37,8 +37,8 @@ class _BottleListState extends State<BottleList> {
     }
     if (response.statusCode == 200) {
       List<dynamic> values = new List<dynamic>();
-      values = json.decode(response.body);
-
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map['bottleList'];
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _bottleList.add(Bottle.fromJson(map));

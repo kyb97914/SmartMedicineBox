@@ -51,8 +51,9 @@ dependencies:
   dio: ^3.0.9
   json_serializable : ^3.3.0
   platform: ^2.2.1
-  package_info: ^0.4.0+18 
-
+  package_info: ^0.4.0+18
+  qrscan: ^0.2.22
+  permission_handler: ^5.1.0+2
 dev_dependencies:
   flutter_test:
     sdk: flutter

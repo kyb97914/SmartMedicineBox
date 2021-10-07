@@ -108,19 +108,21 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  //Get Hub List 함수
   Future<String> getHubList() async {
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response response = await http.get(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
       headers: {"authorization": usertoken},
     );
+    print(response.body);
     List<dynamic> values = new List<dynamic>();
     if (_hublist.length != 0) {
       _hublist.clear();
     }
+    print(response.statusCode);
+    Map<String, dynamic> map = json.decode(response.body);
+    values = map["hubList"];
     if (response.statusCode == 200) {
-      values = json.decode(response.body);
       for (int i = 0; i < values.length; i++) {
         _hublist.add(values[i]['hubId']);
       }
@@ -310,15 +312,16 @@ class _SignInPageState extends State<SignInPage> {
                                   RegisterHub(modify_hub: 0),
                             ),
                           );
+                        } else {
+                          print('asdgasdf');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  HubList(hublist: _hublist),
+                            ),
+                          );
                         }
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                HubList(hublist: _hublist),
-                          ),
-                        );
                       }
                     },
                   ),

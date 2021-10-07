@@ -35,7 +35,8 @@ class _HubListState extends State<HubList> {
     }
     if (response.statusCode == 200) {
       List<dynamic> values = new List<dynamic>();
-      values = json.decode(response.body);
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map["bottleList"];
 
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
@@ -62,8 +63,9 @@ class _HubListState extends State<HubList> {
       _hublist.clear();
     }
     print(response.statusCode);
+    Map<String, dynamic> map = json.decode(response.body);
+    values = map["hubList"];
     if (response.statusCode == 200) {
-      values = json.decode(response.body);
       for (int i = 0; i < values.length; i++) {
         _hublist.add(values[i]['hubId']);
       }

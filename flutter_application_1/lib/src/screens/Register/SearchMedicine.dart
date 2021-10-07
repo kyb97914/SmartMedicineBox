@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,8 @@ import '../../models/Medicine.dart';
 import 'DetailMedicine.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../Components/background.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchMedicine extends StatefulWidget {
   String bottleId;
@@ -18,7 +21,47 @@ class SearchMedicine extends StatefulWidget {
 class _SearchMedicineState extends State<SearchMedicine> {
   List<Medicine> _medicineList = new List<Medicine>();
   final medicineNameController = TextEditingController();
+  String medicineId, dosage, doctorId;
+  Future<String> patchMedcine() async {
+    String usertoken = await UserSecureStorage.getUserToken();
 
+    http.Response response = await http.patch(
+        Uri.encodeFull(
+            DotEnv().env['SERVER_URL'] + 'bottle/' + widget.bottleId),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": usertoken
+        },
+        body: jsonEncode({
+          'medicineId': medicineId,
+          'dosage': dosage,
+        }));
+    print(response.body);
+    if (response.statusCode == 200) {
+      return "Complete";
+    } else if (response.statusCode == 404) {
+      return "약병이 존재하지 않습니다.";
+    } else if (response.statusCode == 403) {
+      return "약병에 접근할 권한이 없습니다.";
+    } else {
+      return "알 수 없는 오류";
+    }
+  }
+
+  Future<bool> checkPermission() async {
+    Map<Permission, PermissionStatus> statuses =
+        await [Permission.camera].request();
+    bool per = true;
+
+    statuses.forEach((permission, permissionStatus) {
+      if (!permissionStatus.isGranted) {
+        per = false;
+      }
+    });
+    return per;
+  }
+
+  String qrCode;
   Future<String> postMeicineList() async {
     String usertoken = await UserSecureStorage.getUserToken();
     print(Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'medicine'));
@@ -46,8 +89,14 @@ class _SearchMedicineState extends State<SearchMedicine> {
     }
   }
 
-  Future<void> dd() async {
-    print("hello");
+  Future<void> scan() async {
+    String temp = await scanner.scan();
+    setState(() {
+      medicineId = temp.split('/')[1];
+      dosage = temp.split('/')[2];
+      doctorId = temp.split('/')[4];
+      qrCode = temp;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -114,10 +163,10 @@ class _SearchMedicineState extends State<SearchMedicine> {
                             size: size.height * 0.05,
                           ),
                           onPressed: () async {
-                            String saveMessage = await postMeicineList();
-                            if (saveMessage == "GET") {
-                              setState(() {});
-                            }
+                            await checkPermission();
+                            await scan();
+                            await patchMedcine();
+                            print(qrCode);
                             //검색 함수를 여기다가
                           },
                         ),

@@ -142,9 +142,7 @@ class _RegisterBottleState extends State<RegisterBottle> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        SearchMedicine(
-                                      bottleId: medicineBottleIDController.text,
-                                    ),
+                                        BottleList(),
                                   ),
                                 );
                               },
