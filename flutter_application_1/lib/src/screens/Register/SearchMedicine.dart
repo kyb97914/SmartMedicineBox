@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/Medicine.dart';
 import 'DetailMedicine.dart';
 import '../../utils/user_secure_stoarge.dart';
+import '../Components/background.dart';
 
 class SearchMedicine extends StatefulWidget {
   String bottleId;
@@ -17,7 +18,6 @@ class SearchMedicine extends StatefulWidget {
 class _SearchMedicineState extends State<SearchMedicine> {
   List<Medicine> _medicineList = new List<Medicine>();
   final medicineNameController = TextEditingController();
-  final medicineCompanyController = TextEditingController();
 
   Future<String> postMeicineList() async {
     String usertoken = await UserSecureStorage.getUserToken();
@@ -46,14 +46,169 @@ class _SearchMedicineState extends State<SearchMedicine> {
     }
   }
 
+  Future<void> dd() async {
+    print("hello");
+  }
+
   Widget build(BuildContext context) {
-    bool isForward = false;
     final Size size = MediaQuery.of(context).size;
-    // int goals = 60;
-    // int points = 75;
 
     return Scaffold(
-      appBar: AppBar(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Background(
+          child: Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                Center(
+                  child: Text(
+                    "약 검색",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: size.width * 0.7,
+                      height: size.height * 0.07,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade700.withOpacity(0.1),
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Center(
+                        child: TextField(
+                          textAlignVertical: TextAlignVertical.center,
+                          textInputAction: TextInputAction.go,
+                          onSubmitted: (value) async {
+                            await postMeicineList();
+                          },
+                          controller: medicineNameController,
+                          decoration: InputDecoration(
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            hintText: '약 검색',
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: size.width * 0.01),
+                    Center(
+                      child: Container(
+                        width: size.width * 0.15,
+                        height: size.height * 0.07,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade500.withOpacity(0.2),
+                            shape: BoxShape.circle),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.qr_code_scanner,
+                            size: size.height * 0.05,
+                          ),
+                          onPressed: () async {
+                            String saveMessage = await postMeicineList();
+                            if (saveMessage == "GET") {
+                              setState(() {});
+                            }
+                            //검색 함수를 여기다가
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: size.height * 0.01),
+                Expanded(
+                  child: ListView.separated(
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          height: 90,
+                          padding: EdgeInsets.only(
+                              left: 30, bottom: 10, top: 10, right: 5),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 10),
+                                blurRadius: 2,
+                                color: Color(0xFFD3D3D3).withOpacity(0.3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: _medicineList[index].name + "\n",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: _medicineList[index].company,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 18,
+                                ),
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          DetailMedicine(
+                                        searchMedicine: _medicineList[index],
+                                        bottleId: widget.bottleId,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext contetx, int index) =>
+                          const Divider(),
+                      itemCount: _medicineList.length == null
+                          ? 0
+                          : _medicineList.length),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+/*
+
+
+
+ appBar: AppBar(
         backgroundColor: Colors.white,
         leading: new Icon(Icons.medical_services_rounded,
             color: Colors.black, size: 45.0),
@@ -240,5 +395,4 @@ class _SearchMedicineState extends State<SearchMedicine> {
         ),
       ),
     );
-  }
-}
+ */
