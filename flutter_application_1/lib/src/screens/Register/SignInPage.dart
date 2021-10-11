@@ -9,6 +9,7 @@ import '../../utils/user_secure_stoarge.dart';
 import 'HubList.dart';
 import 'RegsiterHub.dart';
 import '../../models/User.dart';
+import '../Main/ListPage.dart';
 import 'Component/or_divider.dart';
 import 'Component/social_icon.dart';
 import '../Components/RoundedButton.dart';
@@ -96,7 +97,6 @@ class _SignInPageState extends State<SignInPage> {
         },
       ),
     );
-    print(response.body);
     Map<String, dynamic> data = jsonDecode(response.body);
     user = LocalUser.fromJson(data);
     UserSecureStorage.setUserToken(user.token);
@@ -114,12 +114,10 @@ class _SignInPageState extends State<SignInPage> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
       headers: {"authorization": usertoken},
     );
-    print(response.body);
     List<dynamic> values = new List<dynamic>();
     if (_hublist.length != 0) {
       _hublist.clear();
     }
-    print(response.statusCode);
     Map<String, dynamic> map = json.decode(response.body);
     values = map["hubList"];
     if (response.statusCode == 200) {
@@ -258,8 +256,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              HubList(hublist: _hublist),
+                          builder: (BuildContext context) => ListPage(),
                         ),
                       );
                     } else {
@@ -290,8 +287,7 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              HubList(hublist: _hublist),
+                          builder: (BuildContext context) => ListPage(),
                         ),
                       );
                     },
@@ -317,8 +313,7 @@ class _SignInPageState extends State<SignInPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  HubList(hublist: _hublist),
+                              builder: (BuildContext context) => ListPage(),
                             ),
                           );
                         }
