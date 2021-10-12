@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../utils/user_secure_stoarge.dart';
+import '../../models/DoctorREQ.dart';
 
 class DoctorRequest extends StatefulWidget {
   @override
@@ -11,22 +12,29 @@ class DoctorRequest extends StatefulWidget {
 }
 
 class _DoctorRequestState extends State<DoctorRequest> {
-  List<int> _doctorlist = new List<int>();
+  List<DoctorREQ> _doctorlist = new List<DoctorREQ>();
 
   Future<String> getDoctorRequestList() async {
     String usertoken = await UserSecureStorage.getUserToken();
+    print(usertoken);
     http.Response response = await http.get(
-      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctorrequest'),
       headers: {"authorization": usertoken},
     );
+    print(response.statusCode);
     List<dynamic> values = new List<dynamic>();
+    Map<String, dynamic> map = json.decode(response.body);
+    values = map['doctorReqList'];
+    print(values);
     if (_doctorlist.length != 0) {
       _doctorlist.clear();
     }
     if (response.statusCode == 200) {
-      values = json.decode(response.body);
       for (int i = 0; i < values.length; i++) {
-        _doctorlist.add(values[i]['hubId']);
+        Map<String, dynamic> map = values[i];
+        print('asdag');
+        print(values[i]);
+        _doctorlist.add(DoctorREQ.fromJson(map));
       }
       return "get완료";
     } else if (response.statusCode == 404) {
@@ -102,7 +110,7 @@ class _DoctorRequestState extends State<DoctorRequest> {
                           ),
                           child: ListTile(
                             title: Text(
-                              'DoctorID: ' + '${_doctorlist[index]}',
+                              _doctorlist[index].doctorId,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 20,

@@ -1,5 +1,29 @@
 class Bottle {
   final int bottleId;
+  final int hubId;
+
+  Bottle({
+    this.bottleId,
+    this.hubId,
+  });
+
+  factory Bottle.fromJson(Map<String, dynamic> parsedJson) {
+    return Bottle(
+      bottleId: parsedJson['bottleId'],
+      hubId: parsedJson['hubId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "bottleId": bottleId,
+        "hubId": hubId,
+      };
+}
+
+/*
+
+class Bottle {
+  final int bottleId;
   final String temperature;
   final String humidity;
   final String balance;
@@ -42,3 +66,5 @@ class Bottle {
         "dosage": dosage,
       };
 }
+
+ */

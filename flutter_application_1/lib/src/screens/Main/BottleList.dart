@@ -170,6 +170,7 @@ class _BottleListState extends State<BottleList> {
                               ),
                             ),
                             onTap: () {
+                              /*
                               if (_bottleList[index].medicineId == null) {
                                 //약병에 약이 없는 경우
                               } else {
@@ -186,6 +187,7 @@ class _BottleListState extends State<BottleList> {
                                   ),
                                 ),
                               );
+                            */
                             },
                           );
                         },

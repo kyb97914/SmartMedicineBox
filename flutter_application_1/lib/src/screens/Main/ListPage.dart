@@ -12,6 +12,8 @@ import '../Components/RoundedButton.dart';
 import '../Register/RegsiterHub.dart';
 import '../../models/UserProfile.dart';
 import '../Main/DashBoard.dart';
+import '../Register/DoctorRequest.dart';
+import '../Components/appbar.dart';
 
 class ListPage extends StatefulWidget {
   List<int> hublist;
@@ -25,6 +27,8 @@ class _ListPageState extends State<ListPage> {
   List<Bottle> _bottleList = new List<Bottle>();
   List<int> _hublist = new List<int>();
   UserProfile userprofile;
+  //Doctor Request Alarm
+  int newalarm = 0;
   //Hub List의 Default index 0
   int hubIndex = 0;
   //Get BottleList
@@ -43,7 +47,6 @@ class _ListPageState extends State<ListPage> {
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["bottleList"];
-
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _bottleList.add(Bottle.fromJson(map));
@@ -84,7 +87,6 @@ class _ListPageState extends State<ListPage> {
   }
 
   Future<String> getInfo() async {
-    print('dasg');
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response response = await http.get(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user'),
@@ -100,6 +102,7 @@ class _ListPageState extends State<ListPage> {
     final Size size = MediaQuery.of(context).size;
     return WillPopScope(
       child: Scaffold(
+        appBar: appbar(context),
         body: FutureBuilder(
           future: getHubList(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -175,72 +178,90 @@ class _ListPageState extends State<ListPage> {
                           buildHub(index),
                     ),
                   ),
-                  Expanded(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(30),
-                      itemCount:
-                          _bottleList.length == null ? 0 : _bottleList.length,
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return InkResponse(
-                          splashColor: Colors.transparent,
-                          child: Container(
-                            height: 140,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              border: Border.all(),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16.0),
-                              ),
+                  FutureBuilder(
+                    future: getBottleList(_hublist[hubIndex]),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData == false) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Error: ${snapshot.error}',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        );
+                      } else {
+                        return Expanded(
+                          child: GridView.builder(
+                            padding: const EdgeInsets.all(30),
+                            itemCount: _bottleList.length == null
+                                ? 0
+                                : _bottleList.length,
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
                             ),
-                            child: Column(
-                              children: [
-                                Container(
+                            itemBuilder: (BuildContext context, int index) {
+                              return InkResponse(
+                                splashColor: Colors.transparent,
+                                child: Container(
+                                  height: 140,
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                          color: Colors.black,
-                                          width: 1,
-                                          style: BorderStyle.solid),
+                                    border: Border.all(),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16.0),
                                     ),
                                   ),
-                                  height: 30,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  child: Column(
                                     children: [
                                       Container(
-                                        height: 30,
-                                        child: Center(
-                                          child: Text(
-                                            '${_bottleList[index].bottleId}',
-                                            style: TextStyle(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
                                                 color: Colors.black,
-                                                fontSize: 20,
-                                                fontFamily: 'Noto',
-                                                fontWeight: FontWeight.bold),
+                                                width: 1,
+                                                style: BorderStyle.solid),
                                           ),
                                         ),
+                                        height: 30,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              height: 30,
+                                              child: Center(
+                                                child: Text(
+                                                  '${_bottleList[index].bottleId}',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 20,
+                                                      fontFamily: 'Noto',
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 70,
+                                        child: Icon(
+                                          Icons.medical_services_outlined,
+                                          size: 70,
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 5),
-                                Container(
-                                  height: 70,
-                                  child: Icon(
-                                    Icons.medical_services_outlined,
-                                    size: 70,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {
+                                onTap: () {
+                                  /*
                             if (_bottleList[index].medicineId == null) {
                               //약병에 약이 없는 경우
                             } else {
@@ -257,10 +278,14 @@ class _ListPageState extends State<ListPage> {
                                 ),
                               ),
                             );
-                          },
+                          */
+                                },
+                              );
+                            },
+                          ),
                         );
-                      },
-                    ),
+                      }
+                    },
                   ),
                   Container(
                     height: size.height * 0.1,
@@ -281,6 +306,53 @@ class _ListPageState extends State<ListPage> {
               );
             }
           },
+        ),
+        floatingActionButton: Container(
+          child: FittedBox(
+            child: Stack(
+              alignment: Alignment(1.4, -1.5),
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    //여기 누르면 넘어가는데 아마 숫자가 있을 경우만 넘어가도록 하기
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => DoctorRequest(),
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.email_outlined),
+                  backgroundColor: Colors.blue,
+                ),
+                newalarm != 0
+                    ? Container(
+                        // This is your Badge
+                        child: Center(
+                          // child 문을  ? : 를 이용하여 구분하자
+                          child: Text(newalarm.toString(),
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                        padding: EdgeInsets.all(8),
+                        constraints:
+                            BoxConstraints(minHeight: 32, minWidth: 32),
+                        decoration: BoxDecoration(
+                          // This controls the shadow
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                color: Colors.black.withAlpha(50))
+                          ],
+                          borderRadius: BorderRadius.circular(16),
+                          color:
+                              Colors.blue, // This would be color of the Badge
+                        ),
+                      )
+                    : new Container()
+              ],
+            ),
+          ),
         ),
       ),
       onWillPop: () {
