@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../../models/DoctorREQ.dart';
+import '../Main/ListPage.dart';
 
 class DoctorRequest extends StatefulWidget {
   @override
@@ -16,7 +17,6 @@ class _DoctorRequestState extends State<DoctorRequest> {
 
   Future<String> getDoctorRequestList() async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print(usertoken);
     http.Response response = await http.get(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctorrequest'),
       headers: {"authorization": usertoken},
@@ -32,8 +32,6 @@ class _DoctorRequestState extends State<DoctorRequest> {
     if (response.statusCode == 200) {
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
-        print('asdag');
-        print(values[i]);
         _doctorlist.add(DoctorREQ.fromJson(map));
       }
       return "get완료";
@@ -41,6 +39,24 @@ class _DoctorRequestState extends State<DoctorRequest> {
       return "Not Found";
     } else {
       return "Error";
+    }
+  }
+
+  Future<String> postDoctorRequest(String doctorId) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    print(doctorId);
+    http.Response response = await http.post(
+        Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctorrequest'),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": usertoken
+        },
+        body: jsonEncode({'doctorId': doctorId}));
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return "post완료";
+    } else {
+      return "error";
     }
   }
 
@@ -79,26 +95,10 @@ class _DoctorRequestState extends State<DoctorRequest> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    height: size.height * 0.1,
-                    width: size.width,
-                    child: Center(
-                      child: Text(
-                        '담당의 등록 요청',
-                        textScaleFactor: 1.0,
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'Noto',
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    decoration:
-                        BoxDecoration(border: Border.all(), color: Colors.blue),
-                  ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 10),
                   Expanded(
                     child: ListView.separated(
-                      padding: const EdgeInsets.all(30),
+                      padding: const EdgeInsets.all(25),
                       itemCount: _doctorlist.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
@@ -106,38 +106,82 @@ class _DoctorRequestState extends State<DoctorRequest> {
                           decoration: BoxDecoration(
                             border: Border.all(),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(25.0)),
+                                BorderRadius.all(Radius.circular(20.0)),
                           ),
-                          child: ListTile(
-                            title: Text(
-                              _doctorlist[index].doctorId,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                  fontFamily: 'Noto',
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            trailing: Icon(Icons.check),
-                            onTap: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: new Text('담당의 등록'),
-                                    content: new Text('담당의  등록이 완료 되었습니다.'),
-                                    actions: <Widget>[
-                                      new FlatButton(
-                                        child: new Text('Close'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                          child: Container(
+                            height: 70,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.account_circle_rounded,
+                                  size: 40,
+                                ),
+                                SizedBox(width: 15),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            _doctorlist[index].doctorNm + "\n",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: _doctorlist[index]
+                                            .info
+                                            .split('➡')[0],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey.shade600,
+                                        ),
                                       ),
                                     ],
-                                  );
-                                },
-                              );
-                              Navigator.of(context).pop();
-                            },
+                                  ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_forward_outlined,
+                                    size: 32,
+                                  ),
+                                  onPressed: () async {
+                                    String savemessage =
+                                        await postDoctorRequest(
+                                            _doctorlist[index].doctorId);
+                                    if (savemessage == "post완료") {
+                                      print("object");
+                                      await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: new Text('담당의 등록'),
+                                            content:
+                                                new Text('담당의  등록이 완료 되었습니다.'),
+                                            actions: <Widget>[
+                                              new FlatButton(
+                                                child: new Text('Close'),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          ListPage(),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
                           ),
                         );
                       },
