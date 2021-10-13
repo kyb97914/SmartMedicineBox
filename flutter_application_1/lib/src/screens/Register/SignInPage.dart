@@ -8,6 +8,7 @@ import '../../utils/user_secure_stoarge.dart';
 
 import 'HubList.dart';
 import 'RegsiterHub.dart';
+import '../../models/Hub.dart';
 import '../../models/User.dart';
 import '../Main/ListPage.dart';
 import 'Component/or_divider.dart';
@@ -39,7 +40,7 @@ class _SignInPageState extends State<SignInPage> {
   final passwordController = TextEditingController();
 
   LocalUser user;
-  List<int> _hublist = new List<int>(); //허브이름을 만들어야 할 것 같은데 임시로 허브 id만 고르게 함
+  List<Hub> _hublist = new List<Hub>(); //허브이름을 만들어야 할 것 같은데 임시로 허브 id만 고르게 함
 
   //Login 함수
 
@@ -118,11 +119,13 @@ class _SignInPageState extends State<SignInPage> {
     if (_hublist.length != 0) {
       _hublist.clear();
     }
-    Map<String, dynamic> map = json.decode(response.body);
-    values = map["hubList"];
     if (response.statusCode == 200) {
+      List<dynamic> values = new List<dynamic>();
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map["hubList"];
       for (int i = 0; i < values.length; i++) {
-        _hublist.add(values[i]['hubId']);
+        Map<String, dynamic> map = values[i];
+        _hublist.add(Hub.fromJson(map));
       }
       return "get완료";
     } else if (response.statusCode == 404) {

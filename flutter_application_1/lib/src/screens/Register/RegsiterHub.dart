@@ -23,7 +23,7 @@ class _RegisterHubState extends State<RegisterHub> {
   final medicineHubIDController = TextEditingController();
   final medicineHubPortController = TextEditingController();
   final medicineHubHostController = TextEditingController();
-
+  final medicineHubNameController = TextEditingController();
   Future<String> registerhub_Validate() async {
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response hubresponse = await http.post(
@@ -36,6 +36,7 @@ class _RegisterHubState extends State<RegisterHub> {
           'hubId': medicineHubIDController.text,
           'host': medicineHubHostController.text,
           'port': medicineHubPortController.text,
+          'hubNm': medicineHubNameController.text
         }));
     if (hubresponse.statusCode == 201) {
       return "허브 등록 완료";
@@ -67,13 +68,6 @@ class _RegisterHubState extends State<RegisterHub> {
                   "허브 등록",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.03,
-              ),
-              SvgPicture.asset(
-                "images/registerhub.svg",
-                height: size.height * 0.2,
               ),
               SizedBox(
                 height: size.height * 0.03,
@@ -186,6 +180,27 @@ class _RegisterHubState extends State<RegisterHub> {
                     color: Colors.grey.shade700,
                     fontSize: 14,
                     fontFamily: 'Noto',
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: TextField(
+                  controller: medicineHubNameController,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.device_hub,
+                      color: Colors.black,
+                    ),
+                    hintText: "허브 닉네임 입력",
+                    border: InputBorder.none,
                   ),
                 ),
               ),

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // Screen import
 import '../../models/Bottle.dart';
+import '../../models/Hub.dart';
 import '../Main/BottleList.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../Components/RoundedButton.dart';
@@ -25,7 +26,7 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   List<Bottle> _bottleList = new List<Bottle>();
-  List<int> _hublist = new List<int>();
+  List<Hub> _hublist = new List<Hub>();
   UserProfile userprofile;
   //Doctor Request Alarm
   int newalarm = 0;
@@ -47,17 +48,17 @@ class _ListPageState extends State<ListPage> {
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["bottleList"];
+      print(values);
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _bottleList.add(Bottle.fromJson(map));
-        return "GET";
       }
+      return "GET";
     } else if (response.statusCode == 404) {
       return "Not Found";
     } else {
       return "Error";
     }
-    return "Error";
   }
 
   Future<String> getHubList() async {
@@ -66,17 +67,20 @@ class _ListPageState extends State<ListPage> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
       headers: {"authorization": usertoken},
     );
-    print(response.body);
-    List<dynamic> values = new List<dynamic>();
+
     if (_hublist.length != 0) {
       _hublist.clear();
     }
-    print(response.statusCode);
-    Map<String, dynamic> map = json.decode(response.body);
-    values = map["hubList"];
     if (response.statusCode == 200) {
+      List<dynamic> values = new List<dynamic>();
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map["hubList"];
+      print('hi');
+      print(values);
       for (int i = 0; i < values.length; i++) {
-        _hublist.add(values[i]['hubId']);
+        Map<String, dynamic> map = values[i];
+        _hublist.add(Hub.fromJson(map));
+        print('hello' + _hublist[i].hubId.toString());
       }
       return "get완료";
     } else if (response.statusCode == 404) {
@@ -145,13 +149,55 @@ class _ListPageState extends State<ListPage> {
                             ),
                           );
                         } else {
-                          return Column(
+                          return Row(
                             children: <Widget>[
-                              //d이부분은 나중에 꾸미자
-                              Text(userprofile.userNm),
-                              Text(userprofile.birth),
-                              Text(userprofile.userId),
-                              Text(userprofile.contact)
+                              SizedBox(width: size.width * 0.05),
+                              Icon(
+                                Icons.account_circle_outlined,
+                                size: 60,
+                              ),
+                              SizedBox(width: 15),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: userprofile.userNm + "\n",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: "  \n",
+                                      style: TextStyle(
+                                        fontSize: 3,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: userprofile.userId + "\n",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "  \n",
+                                      style: TextStyle(
+                                        fontSize: 3,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: userprofile.contact,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           );
                         }
@@ -166,9 +212,17 @@ class _ListPageState extends State<ListPage> {
                       itemBuilder: (BuildContext context, int index) =>
                           buildHub(index),
                     ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                            color: Colors.black,
+                            width: 1,
+                            style: BorderStyle.solid),
+                      ),
+                    ),
                   ),
                   FutureBuilder(
-                    future: getBottleList(_hublist[hubIndex]),
+                    future: getBottleList(_hublist[hubIndex].hubId),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData == false) {
                         return CircularProgressIndicator();
@@ -216,7 +270,7 @@ class _ListPageState extends State<ListPage> {
                                                 style: BorderStyle.solid),
                                           ),
                                         ),
-                                        height: 30,
+                                        height: 35,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -225,10 +279,10 @@ class _ListPageState extends State<ListPage> {
                                               height: 30,
                                               child: Center(
                                                 child: Text(
-                                                  '${_bottleList[index].bottleId}',
+                                                  _bottleList[index].bottleNm,
                                                   style: TextStyle(
                                                       color: Colors.black,
-                                                      fontSize: 20,
+                                                      fontSize: 18,
                                                       fontFamily: 'Noto',
                                                       fontWeight:
                                                           FontWeight.bold),
@@ -343,16 +397,13 @@ class _ListPageState extends State<ListPage> {
         });
       },
       child: Container(
-        decoration: BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: Colors.black, width: 1.0))),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                _hublist[index].toString(),
+                _hublist[index].hubNm,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

@@ -1,3 +1,4 @@
+import 'package:Smart_Medicine_Box/src/screens/Main/ListPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class RegisterBottle extends StatefulWidget {
 
 class _RegisterBottleState extends State<RegisterBottle> {
   final medicineBottleIDController = TextEditingController();
-  //test
+  final medicineBottleNameController = TextEditingController();
 
   Future<String> registerbottle_Validate() async {
     String usertoken = await UserSecureStorage.getUserToken();
@@ -33,8 +34,11 @@ class _RegisterBottleState extends State<RegisterBottle> {
           "Content-Type": "application/json",
           "authorization": usertoken
         },
-        body: jsonEncode(
-            {'bottleId': medicineBottleIDController.text, 'hubId': hubid}));
+        body: jsonEncode({
+          'bottleId': medicineBottleIDController.text,
+          'hubId': hubid,
+          'bottleNm': medicineBottleNameController.text
+        }));
 
     if (bottleresponse.statusCode == 201) {
       return "등록 완료";
@@ -118,6 +122,27 @@ class _RegisterBottleState extends State<RegisterBottle> {
                   ),
                 ),
               ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: TextField(
+                  controller: medicineBottleNameController,
+                  decoration: InputDecoration(
+                    icon: Icon(
+                      Icons.medical_services_sharp,
+                      color: Colors.black,
+                    ),
+                    hintText: "약병 닉네임 입력",
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
               SizedBox(
                 height: size.height * 0.02,
               ),
@@ -142,7 +167,7 @@ class _RegisterBottleState extends State<RegisterBottle> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        BottleList(),
+                                        ListPage(),
                                   ),
                                 );
                               },
