@@ -121,18 +121,7 @@ class _ListPageState extends State<ListPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
-                    height: size.height * 0.05,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      "SMART MEDICINE BOX",
-                      textScaleFactor: 1.0,
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontFamily: 'Noto',
-                          fontWeight: FontWeight.bold),
-                    ),
+                    height: size.height * 0.01,
                   ),
                   Container(
                     height: size.height * 0.15,
@@ -287,21 +276,6 @@ class _ListPageState extends State<ListPage> {
                       }
                     },
                   ),
-                  Container(
-                    height: size.height * 0.1,
-                    child: RoundedButton(
-                      text: "허브 추가",
-                      press: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                RegisterHub(modify_hub: 0),
-                          ),
-                        );
-                      },
-                    ),
-                  )
                 ],
               );
             }
