@@ -21,11 +21,9 @@ class _DoctorRequestState extends State<DoctorRequest> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctorrequest'),
       headers: {"authorization": usertoken},
     );
-    print(response.statusCode);
     List<dynamic> values = new List<dynamic>();
     Map<String, dynamic> map = json.decode(response.body);
     values = map['doctorReqList'];
-    print(values);
     if (_doctorlist.length != 0) {
       _doctorlist.clear();
     }
@@ -44,7 +42,6 @@ class _DoctorRequestState extends State<DoctorRequest> {
 
   Future<String> postDoctorRequest(String doctorId) async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print(doctorId);
     http.Response response = await http.post(
         Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctorrequest'),
         headers: {
@@ -52,7 +49,6 @@ class _DoctorRequestState extends State<DoctorRequest> {
           "authorization": usertoken
         },
         body: jsonEncode({'doctorId': doctorId}));
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return "post완료";
     } else {

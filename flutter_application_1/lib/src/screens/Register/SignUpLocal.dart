@@ -96,7 +96,6 @@ class _SignUpLocalState extends State<SignUpLocal> {
         },
       ),
     );
-    print(response.statusCode);
     if (response.statusCode == 201) {
       return "정보 입력 완료";
     } else {
@@ -120,7 +119,6 @@ class _SignUpLocalState extends State<SignUpLocal> {
         },
       ),
     );
-    print(response.statusCode);
     if (response.statusCode == 201) {
       return "정보 입력 완료";
     } else {

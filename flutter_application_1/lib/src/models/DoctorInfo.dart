@@ -14,11 +14,13 @@ class DoctorInfo {
 
   factory DoctorInfo.fromJson(Map<String, dynamic> parsedJson) {
     return DoctorInfo(
+        /*
         hospitalNm: parsedJson['info']['hospitalNm'],
         hospitalAddr: parsedJson['info']['hospitalAddr'],
         contact: parsedJson['info']['contact'],
         doctorNm: parsedJson['info']['doctorNm'],
-        doctorId: parsedJson['doctorId']);
+        doctorId: parsedJson['doctorId']*/
+        );
   }
 
   Map<String, dynamic> toJson() => {

@@ -211,8 +211,6 @@ class _RegisterHubState extends State<RegisterHub> {
                 text: "허브 등록",
                 press: () async {
                   String saveMessage = await registerhub_Validate();
-                  print(saveMessage);
-                  print(widget.modify_hub);
                   if (saveMessage == "허브 등록 완료" && widget.modify_hub == 0) {
                     UserSecureStorage.setHubId(medicineHubIDController.text);
                     Navigator.push(

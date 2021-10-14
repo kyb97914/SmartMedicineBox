@@ -1,4 +1,5 @@
 import 'package:Smart_Medicine_Box/src/screens/Main/ListPage.dart';
+import 'package:Smart_Medicine_Box/src/screens/Register/SearchMedicine.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -11,6 +12,7 @@ import 'package:Smart_Medicine_Box/src/screens/Main/SettingPage.dart';
 import 'MainPage.dart';
 import 'FeedBack.dart';
 import '../Components/appbar.dart';
+import '../Components/RoundedButton.dart';
 
 class DashBoard extends StatefulWidget {
   int pageNumber;
@@ -26,7 +28,6 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0;
-
   Widget build(BuildContext context) {
     _selectedIndex = widget.pageNumber;
     var _tabs = [
@@ -90,10 +91,12 @@ class _DashBoardState extends State<DashBoard> {
 
 Widget ineerInformationpage(BuildContext context) {
   BottleInfo _bottleinfo;
+  String _bottleId;
   //get bottle
   Future<String> getbottlemedicine() async {
     String usertoken = await UserSecureStorage.getUserToken();
     String bottleid = await UserSecureStorage.getBottleId();
+    _bottleId = bottleid;
     http.Response response = await http.get(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid),
       headers: {"authorization": usertoken},
@@ -126,8 +129,22 @@ Widget ineerInformationpage(BuildContext context) {
           );
         } else {
           if (_bottleinfo.medeicine == null) {
-            return Text('약병 추가 해야 함');
-          } else {
+            //넘기는 페이지 작성
+            return RoundedButton(
+              text: "로그인",
+              color: Colors.blue.shade600,
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        SearchMedicine(bottleId: _bottleId),
+                  ),
+                );
+              },
+            );
+          } else if (_bottleinfo.takeMedicineHist.length == 0) {
+            //뚜껑 여닫는거 없을 때
             return Container(
               height: size.height * 0.9,
               margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
@@ -135,23 +152,6 @@ Widget ineerInformationpage(BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                    height: size.height * 0.08,
-                    width: size.width,
-                    child: Center(
-                      child: Text(
-                        'Inside Information',
-                        textAlign: TextAlign.center,
-                        textScaleFactor: 1.0,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 32,
-                            fontFamily: 'NotoSansKR',
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
                   Container(
                     padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
                     margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -200,13 +200,7 @@ Widget ineerInformationpage(BuildContext context) {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              _bottleinfo.takeMedicineHist[0]
-                                                          .temperature ==
-                                                      null
-                                                  ? '-'
-                                                  : _bottleinfo
-                                                      .takeMedicineHist[0]
-                                                      .temperature,
+                                              '-',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
@@ -269,12 +263,7 @@ Widget ineerInformationpage(BuildContext context) {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              snapshot.data.humidity
-                                                          .toString() ==
-                                                      null
-                                                  ? '-'
-                                                  : snapshot.data.humidity
-                                                      .toString(),
+                                              '-',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
@@ -354,12 +343,7 @@ Widget ineerInformationpage(BuildContext context) {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              snapshot.data.balance
-                                                          .toString() ==
-                                                      null
-                                                  ? '-'
-                                                  : snapshot.data.balance
-                                                      .toString(),
+                                              '0',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
@@ -418,10 +402,304 @@ Widget ineerInformationpage(BuildContext context) {
                                       height: size.height * 0.14,
                                       child: Center(
                                         child: Text(
-                                          snapshot.data.recentOpen == null
+                                          '00:00',
+                                          textAlign: TextAlign.center,
+                                          textScaleFactor: 1.0,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 40,
+                                              fontFamily: 'NotoSansKR',
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                      child: Text(
+                    '약병 이용 기록이 없습니다.',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'NotoSansKR',
+                        fontWeight: FontWeight.w700),
+                  )),
+                ],
+              ),
+            );
+          } else {
+            return Container(
+              height: size.height * 0.9,
+              margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    height: size.height * 0.25,
+                    width: size.width,
+                    child: Column(
+                      children: <Widget>[
+                        Flexible(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: size.width * 0.43,
+                                height: size.width * 0.45,
+                                margin: const EdgeInsets.all(5.0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8E97FD),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.05,
+                                      child: Center(
+                                        child: Text(
+                                          '약병 내부 온도',
+                                          textAlign: TextAlign.center,
+                                          textScaleFactor: 1.0,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontFamily: 'NotoSansKR',
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.145,
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '-',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Text(
+                                              '℃',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: size.width * 0.43,
+                                height: size.width * 0.45,
+                                margin: const EdgeInsets.all(5.0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8E97FD),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.05,
+                                      child: Center(
+                                        child: Text(
+                                          '약병 내부 습도',
+                                          textAlign: TextAlign.center,
+                                          textScaleFactor: 1.0,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontFamily: 'NotoSansKR',
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.14,
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              _bottleinfo.takeMedicineHist ==
+                                                      null
+                                                  ? '-'
+                                                  : 'asdfg',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Text(
+                                              '%',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 50,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    height: size.height * 0.3,
+                    width: size.width,
+                    child: Column(
+                      children: <Widget>[
+                        Flexible(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: size.width * 0.43,
+                                height: size.width * 0.45,
+                                margin: const EdgeInsets.all(5.0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8E97FD),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.05,
+                                      child: Center(
+                                        child: Text(
+                                          '약병 내부 잔량',
+                                          textAlign: TextAlign.center,
+                                          textScaleFactor: 1.0,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontFamily: 'NotoSansKR',
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.14,
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              _bottleinfo.takeMedicineHist ==
+                                                      null
+                                                  ? '-'
+                                                  : 'asdg',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 80,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Text(
+                                              '%',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 60,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: size.width * 0.43,
+                                height: size.width * 0.45,
+                                margin: const EdgeInsets.all(5.0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8E97FD),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.05,
+                                      child: Center(
+                                        child: Text(
+                                          '최근 개폐 시간',
+                                          textAlign: TextAlign.center,
+                                          textScaleFactor: 1.0,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontFamily: 'NotoSansKR',
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: size.width,
+                                      height: size.height * 0.14,
+                                      child: Center(
+                                        child: Text(
+                                          _bottleinfo.takeMedicineHist == null
                                               ? '-'
-                                              : DateFormat.Hm().format(
-                                                  snapshot.data.recentOpen),
+                                              : 'asdg',
                                           textAlign: TextAlign.center,
                                           textScaleFactor: 1.0,
                                           style: TextStyle(

@@ -33,7 +33,6 @@ class _HubModifyListState extends State<HubModifyList> {
       for (int i = 0; i < values.length; i++) {
         _hublist.add(values[i]['hubId']);
       }
-      print(_hublist);
       return "get완료";
     } else if (response.statusCode == 404) {
       return "Not Found";

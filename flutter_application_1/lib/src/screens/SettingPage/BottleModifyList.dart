@@ -218,7 +218,6 @@ class _BottleModifyListState extends State<BottleModifyList> {
                                       new FlatButton(
                                         child: new Text('삭제'),
                                         onPressed: () async {
-                                          print('dfg');
                                           await deleteBottle(
                                               _bottleList[index].bottleId);
                                           setState(() {});

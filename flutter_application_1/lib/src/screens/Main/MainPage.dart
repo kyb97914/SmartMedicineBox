@@ -9,6 +9,7 @@ import '../../models/Medicine.dart';
 
 import '../Register/SearchMedicine.dart';
 import '../../utils/flutter_material_pickers.dart';
+import '../../models/BottleInfo.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -20,22 +21,24 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     Medicine _medicineInformation = new Medicine();
     List<String> doctorlist = ['temp1', 'temp2', 'temp3', 'temp4'];
+    BottleInfo _bottleinfo;
+    String _bottleId;
 
-    Future<Medicine> _getmedicine() async {
+    Future<String> getbottlemedicine() async {
       String usertoken = await UserSecureStorage.getUserToken();
-      String medicineid = await UserSecureStorage.getMedicineId();
-
-      http.Response medicineresponse = await http.get(
-        Uri.encodeFull(
-            DotEnv().env['SERVER_URL'] + 'medicine/' + medicineid.toString()),
+      String bottleid = await UserSecureStorage.getBottleId();
+      _bottleId = bottleid;
+      http.Response response = await http.get(
+        Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid),
         headers: {"authorization": usertoken},
       );
-
-      if (medicineresponse.statusCode == 200) {
-        Map<String, dynamic> data = jsonDecode(medicineresponse.body);
-        _medicineInformation = Medicine.fromJson(data);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> map = json.decode(response.body);
+        _bottleinfo = BottleInfo.fromJson(map);
+        return "get";
+      } else {
+        return "error";
       }
-      return _medicineInformation;
     }
 
     final Size size = MediaQuery.of(context).size;
@@ -43,7 +46,7 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: _getmedicine(),
+          future: getbottlemedicine(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {
               return CircularProgressIndicator();
@@ -79,9 +82,9 @@ class _MainPageState extends State<MainPage> {
                           Container(
                             child: Center(
                               child: Text(
-                                  '${snapshot.data.name}' == null
+                                  _bottleinfo.medeicine.name == null
                                       ? '-'
-                                      : '${snapshot.data.name}',
+                                      : _bottleinfo.medeicine.name,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 24,
@@ -104,9 +107,9 @@ class _MainPageState extends State<MainPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  _medicineInformation.company == null
+                                  _bottleinfo.doctorInfo.doctorNm == null
                                       ? '-'
-                                      : _seletedDoctor,
+                                      : _bottleinfo.doctorInfo.doctorNm,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -130,9 +133,9 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                                 Text(
-                                  _medicineInformation.company == null
+                                  _bottleinfo.medeicine.company == null
                                       ? '-'
-                                      : _medicineInformation.company,
+                                      : _bottleinfo.medeicine.company,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -156,9 +159,9 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                                 Text(
-                                  _medicineInformation.target == null
+                                  _bottleinfo.medeicine.target == null
                                       ? '-'
-                                      : _medicineInformation.target,
+                                      : _bottleinfo.medeicine.target,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -182,9 +185,9 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                                 Text(
-                                  _medicineInformation.dosage == null
+                                  _bottleinfo.medeicine.dosage == null
                                       ? '-'
-                                      : _medicineInformation.dosage,
+                                      : _bottleinfo.medeicine.dosage,
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -215,9 +218,9 @@ class _MainPageState extends State<MainPage> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    _medicineInformation.warn == null
+                                    _bottleinfo.medeicine.warn == null
                                         ? '-'
-                                        : _medicineInformation.warn,
+                                        : _bottleinfo.medeicine.warn,
                                     style: TextStyle(
                                         color: Colors.redAccent, fontSize: 14),
                                   ),
