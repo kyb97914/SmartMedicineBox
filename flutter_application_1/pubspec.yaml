@@ -54,6 +54,7 @@ dependencies:
   package_info: ^0.4.0+18
   qrscan: ^0.2.22
   permission_handler: ^5.1.0+2
+  firebase_analytics: ^6.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

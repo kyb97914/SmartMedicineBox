@@ -7,14 +7,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 // Screen import
 import '../../models/Bottle.dart';
 import '../../models/Hub.dart';
-import '../Main/BottleList.dart';
 import '../../utils/user_secure_stoarge.dart';
-import '../Components/RoundedButton.dart';
 import '../Register/RegsiterHub.dart';
 import '../../models/UserProfile.dart';
 import '../Main/DashBoard.dart';
 import '../Register/DoctorRequest.dart';
 import '../Components/appbar.dart';
+import '../Register/RegisterBottle.dart';
 
 class ListPage extends StatefulWidget {
   List<int> hublist;
@@ -35,6 +34,7 @@ class _ListPageState extends State<ListPage> {
   //Get BottleList
   Future<String> getBottleList(int hubid) async {
     String usertoken = await UserSecureStorage.getUserToken();
+    print('usertoken : ' + usertoken);
     http.Response response = await http.get(
       Uri.encodeFull(
           DotEnv().env['SERVER_URL'] + 'bottle/hub/' + hubid.toString()),
@@ -61,6 +61,7 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  //Get Hub List
   Future<String> getHubList() async {
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response response = await http.get(
@@ -80,7 +81,6 @@ class _ListPageState extends State<ListPage> {
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _hublist.add(Hub.fromJson(map));
-        print('hello' + _hublist[i].hubId.toString());
       }
       return "get완료";
     } else if (response.statusCode == 404) {
@@ -90,6 +90,7 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  //Get Info
   Future<String> getInfo() async {
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response response = await http.get(
@@ -100,6 +101,19 @@ class _ListPageState extends State<ListPage> {
     Map<String, dynamic> map = json.decode(response.body);
     userprofile = UserProfile.fromJson(map['profile']);
     return "Get 완료";
+  }
+
+  Future<String> getbottlemedicine(int bottleid) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    print(Uri.encodeFull(
+        DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid.toString()));
+    http.Response response = await http.get(
+      Uri.encodeFull(
+          DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid.toString()),
+      headers: {"authorization": usertoken},
+    );
+
+    print(response.statusCode);
   }
 
   Widget build(BuildContext context) {
@@ -208,7 +222,7 @@ class _ListPageState extends State<ListPage> {
                     height: 40,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _hublist.length,
+                      itemCount: _hublist.length + 1,
                       itemBuilder: (BuildContext context, int index) =>
                           buildHub(index),
                     ),
@@ -240,7 +254,7 @@ class _ListPageState extends State<ListPage> {
                             padding: const EdgeInsets.all(30),
                             itemCount: _bottleList.length == null
                                 ? 0
-                                : _bottleList.length,
+                                : _bottleList.length + 1,
                             gridDelegate:
                                 SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 200,
@@ -250,60 +264,102 @@ class _ListPageState extends State<ListPage> {
                             itemBuilder: (BuildContext context, int index) {
                               return InkResponse(
                                 splashColor: Colors.transparent,
-                                child: Container(
-                                  height: 140,
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(16.0),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.black,
-                                                width: 1,
-                                                style: BorderStyle.solid),
+                                child: index == _bottleList.length
+                                    ? GestureDetector(
+                                        child: Container(
+                                          height: 140,
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(16.0),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.add_circle_outline_sharp,
+                                            size: 70,
                                           ),
                                         ),
-                                        height: 35,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              height: 30,
-                                              child: Center(
-                                                child: Text(
-                                                  _bottleList[index].bottleNm,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                      fontFamily: 'Noto',
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
+                                        onTap: () async {
+                                          UserSecureStorage.setHubId(
+                                              _hublist[hubIndex]
+                                                  .hubId
+                                                  .toString());
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  RegisterBottle(
+                                                hubid: _hublist[hubIndex]
+                                                    .hubId
+                                                    .toString(),
+                                                modify_bottle: false,
                                               ),
                                             ),
+                                          );
+                                        },
+                                      )
+                                    : Container(
+                                        height: 140,
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(16.0),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1,
+                                                      style: BorderStyle.solid),
+                                                ),
+                                              ),
+                                              height: 35,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    height: 30,
+                                                    child: Center(
+                                                      child: Text(
+                                                        _bottleList[index]
+                                                            .bottleNm,
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18,
+                                                            fontFamily: 'Noto',
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Container(
+                                              height: 70,
+                                              child: Icon(
+                                                Icons.medical_services_outlined,
+                                                size: 70,
+                                              ),
+                                            )
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 5),
-                                      Container(
-                                        height: 70,
-                                        child: Icon(
-                                          Icons.medical_services_outlined,
-                                          size: 70,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {
+                                onTap: () async {
+                                  print('asdg');
+                                  await getbottlemedicine(
+                                      _bottleList[index].bottleId);
+
                                   /*
                             if (_bottleList[index].medicineId == null) {
                               //약병에 약이 없는 경우
@@ -396,39 +452,47 @@ class _ListPageState extends State<ListPage> {
           hubIndex = index;
         });
       },
-      child: Container(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                _hublist[index].hubNm,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: hubIndex == index
-                        ? Colors.black
-                        : Colors.grey.shade600),
+      child: index == _hublist.length
+          ? IconButton(
+              icon: Icon(
+                Icons.add_circle,
+                color: Colors.blue,
+                size: 24,
               ),
-              Container(
-                height: 2,
-                width: 30,
-                color: hubIndex == index ? Colors.black : Colors.transparent,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        RegisterHub(modify_hub: 0),
+                  ),
+                );
+              })
+          : Container(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      _hublist[index].hubNm,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: hubIndex == index
+                              ? Colors.black
+                              : Colors.grey.shade600),
+                    ),
+                    Container(
+                      height: 2,
+                      width: 30,
+                      color:
+                          hubIndex == index ? Colors.black : Colors.transparent,
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
-
-/*
- Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  RegisterHub(modify_hub: 0),
-                            ),
-                          ); */

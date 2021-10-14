@@ -1,3 +1,4 @@
+import 'package:Smart_Medicine_Box/src/screens/Main/ListPage.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,7 +7,6 @@ import 'package:intl/intl.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../../models/Bottle.dart';
 import 'package:Smart_Medicine_Box/src/screens/Main/SettingPage.dart';
-import 'BottleList.dart';
 import 'MainPage.dart';
 import 'FeedBack.dart';
 
@@ -111,7 +111,7 @@ class _DashBoardState extends State<DashBoard> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => BottleList(),
+              builder: (BuildContext context) => ListPage(),
             ));
       },
     );
