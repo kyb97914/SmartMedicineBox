@@ -9,8 +9,6 @@ class DoctorREQ {
       {this.patientId, this.doctorId, this.useYn, this.info, this.doctorNm});
 
   factory DoctorREQ.fromJson(Map<String, dynamic> parsedJson) {
-    print('hji');
-    print(parsedJson['doctorID']);
     return DoctorREQ(
         patientId: parsedJson['patientId'],
         doctorId: parsedJson['doctorId'],

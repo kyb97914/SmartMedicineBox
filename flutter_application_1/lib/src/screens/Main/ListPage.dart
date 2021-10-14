@@ -15,6 +15,8 @@ import '../Register/DoctorRequest.dart';
 import '../Components/appbar.dart';
 import '../Register/RegisterBottle.dart';
 
+import '../../models/BottleInfo.dart';
+
 class ListPage extends StatefulWidget {
   List<int> hublist;
   ListPage({Key key, this.hublist}) : super(key: key);
@@ -34,7 +36,6 @@ class _ListPageState extends State<ListPage> {
   //Get BottleList
   Future<String> getBottleList(int hubid) async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print('usertoken : ' + usertoken);
     http.Response response = await http.get(
       Uri.encodeFull(
           DotEnv().env['SERVER_URL'] + 'bottle/hub/' + hubid.toString()),
@@ -48,7 +49,6 @@ class _ListPageState extends State<ListPage> {
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["bottleList"];
-      print(values);
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _bottleList.add(Bottle.fromJson(map));
@@ -76,8 +76,6 @@ class _ListPageState extends State<ListPage> {
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["hubList"];
-      print('hi');
-      print(values);
       for (int i = 0; i < values.length; i++) {
         Map<String, dynamic> map = values[i];
         _hublist.add(Hub.fromJson(map));
@@ -97,7 +95,6 @@ class _ListPageState extends State<ListPage> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user'),
       headers: {"authorization": usertoken},
     );
-    print(response.body);
     Map<String, dynamic> map = json.decode(response.body);
     userprofile = UserProfile.fromJson(map['profile']);
     return "Get 완료";
@@ -105,15 +102,19 @@ class _ListPageState extends State<ListPage> {
 
   Future<String> getbottlemedicine(int bottleid) async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print(Uri.encodeFull(
-        DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid.toString()));
     http.Response response = await http.get(
       Uri.encodeFull(
           DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid.toString()),
       headers: {"authorization": usertoken},
     );
-
-    print(response.statusCode);
+    if (response.statusCode == 200) {
+      BottleInfo bottleinfo;
+      Map<String, dynamic> map = json.decode(response.body);
+      bottleinfo = BottleInfo.fromJson(map);
+      return "get";
+    } else {
+      return "error";
+    }
   }
 
   Widget build(BuildContext context) {
@@ -356,9 +357,17 @@ class _ListPageState extends State<ListPage> {
                                         ),
                                       ),
                                 onTap: () async {
-                                  print('asdg');
-                                  await getbottlemedicine(
-                                      _bottleList[index].bottleId);
+                                  UserSecureStorage.setBottleId(
+                                      _bottleList[index].bottleId.toString());
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          DashBoard(
+                                        pageNumber: 0,
+                                      ),
+                                    ),
+                                  );
 
                                   /*
                             if (_bottleList[index].medicineId == null) {
