@@ -21,6 +21,7 @@ class BottleInfo {
 
     Map<String, dynamic> map = (parsedJson['medicine']);
     Medicine info = Medicine.fromJson(map);
+
     Map<String, dynamic> doctormap = (parsedJson['doctorInfo']);
     DoctorInfo doctorinfo = DoctorInfo.fromJson(doctormap);
     List<TakeMedicineHist> resultList =

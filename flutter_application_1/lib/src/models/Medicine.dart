@@ -1,11 +1,11 @@
 class Medicine {
-  final int medicineId;
-  final String antiEffect;
-  final String company;
-  final String dosage;
-  final String name;
-  final String target;
-  final String warn;
+  int medicineId;
+  String antiEffect;
+  String company;
+  String dosage;
+  String name;
+  String target;
+  String warn;
 
   Medicine(
       {this.medicineId,

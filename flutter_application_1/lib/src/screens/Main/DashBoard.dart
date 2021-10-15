@@ -93,6 +93,7 @@ Widget ineerInformationpage(BuildContext context) {
   BottleInfo _bottleinfo;
   String _bottleId;
   //get bottle
+
   Future<String> getbottlemedicine() async {
     String usertoken = await UserSecureStorage.getUserToken();
     String bottleid = await UserSecureStorage.getBottleId();
@@ -101,6 +102,7 @@ Widget ineerInformationpage(BuildContext context) {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid),
       headers: {"authorization": usertoken},
     );
+    print(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> map = json.decode(response.body);
       _bottleinfo = BottleInfo.fromJson(map);
@@ -127,6 +129,10 @@ Widget ineerInformationpage(BuildContext context) {
               style: TextStyle(fontSize: 15),
             ),
           );
+        } else if (snapshot.data == null) {
+          return Text('Loading');
+        } else if (snapshot.connectionState != ConnectionState.done) {
+          return CircularProgressIndicator();
         } else {
           if (_bottleinfo.medeicine == null) {
             //넘기는 페이지 작성
@@ -353,7 +359,7 @@ Widget ineerInformationpage(BuildContext context) {
                                                   fontWeight: FontWeight.w800),
                                             ),
                                             Text(
-                                              '%',
+                                              '개',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
@@ -423,13 +429,14 @@ Widget ineerInformationpage(BuildContext context) {
                     ),
                   ),
                   Container(
-                      child: Text(
-                    '약병 이용 기록이 없습니다.',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'NotoSansKR',
-                        fontWeight: FontWeight.w700),
-                  )),
+                    child: Text(
+                      '약병 이용 기록이 없습니다.',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'NotoSansKR',
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -489,25 +496,22 @@ Widget ineerInformationpage(BuildContext context) {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '-',
+                                              _bottleinfo.takeMedicineHist ==
+                                                      null
+                                                  ? '-'
+                                                  : _bottleinfo
+                                                          .takeMedicineHist[0]
+                                                          .temperature
+                                                          .toString() +
+                                                      ' ℃',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 50,
+                                                  fontSize: 40,
                                                   fontFamily: 'NotoSansKR',
                                                   fontWeight: FontWeight.w800),
                                             ),
-                                            Text(
-                                              '℃',
-                                              textAlign: TextAlign.center,
-                                              textScaleFactor: 1.0,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 50,
-                                                  fontFamily: 'NotoSansKR',
-                                                  fontWeight: FontWeight.w800),
-                                            )
                                           ],
                                         ),
                                       ),
@@ -555,25 +559,19 @@ Widget ineerInformationpage(BuildContext context) {
                                               _bottleinfo.takeMedicineHist ==
                                                       null
                                                   ? '-'
-                                                  : 'asdfg',
+                                                  : _bottleinfo
+                                                          .takeMedicineHist[0]
+                                                          .humidity
+                                                          .toString() +
+                                                      '%',
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 50,
+                                                  fontSize: 40,
                                                   fontFamily: 'NotoSansKR',
                                                   fontWeight: FontWeight.w800),
                                             ),
-                                            Text(
-                                              '%',
-                                              textAlign: TextAlign.center,
-                                              textScaleFactor: 1.0,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 50,
-                                                  fontFamily: 'NotoSansKR',
-                                                  fontWeight: FontWeight.w800),
-                                            )
                                           ],
                                         ),
                                       ),
@@ -638,22 +636,25 @@ Widget ineerInformationpage(BuildContext context) {
                                               _bottleinfo.takeMedicineHist ==
                                                       null
                                                   ? '-'
-                                                  : 'asdg',
-                                              textAlign: TextAlign.center,
-                                              textScaleFactor: 1.0,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 80,
-                                                  fontFamily: 'NotoSansKR',
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Text(
-                                              '%',
+                                                  : _bottleinfo
+                                                      .takeMedicineHist[0]
+                                                      .dosage
+                                                      .toString(),
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 60,
+                                                  fontFamily: 'NotoSansKR',
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Text(
+                                              '개',
+                                              textAlign: TextAlign.center,
+                                              textScaleFactor: 1.0,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 55,
                                                   fontFamily: 'NotoSansKR',
                                                   fontWeight: FontWeight.w800),
                                             )
@@ -696,18 +697,67 @@ Widget ineerInformationpage(BuildContext context) {
                                       width: size.width,
                                       height: size.height * 0.14,
                                       child: Center(
-                                        child: Text(
-                                          _bottleinfo.takeMedicineHist == null
-                                              ? '-'
-                                              : 'asdg',
-                                          textAlign: TextAlign.center,
-                                          textScaleFactor: 1.0,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 40,
-                                              fontFamily: 'NotoSansKR',
-                                              fontWeight: FontWeight.w800),
-                                        ),
+                                        child: _bottleinfo.takeMedicineHist ==
+                                                null
+                                            ? Text('-',
+                                                style: TextStyle(
+                                                    fontSize: 40,
+                                                    color: Colors.white,
+                                                    fontFamily: 'NotoSansKR',
+                                                    fontWeight:
+                                                        FontWeight.w800))
+                                            : RichText(
+                                                textAlign: TextAlign.center,
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: _bottleinfo
+                                                              .takeMedicineHist[
+                                                                  0]
+                                                              .takeDate
+                                                              .month
+                                                              .toString() +
+                                                          '월 ' +
+                                                          _bottleinfo
+                                                              .takeMedicineHist[
+                                                                  0]
+                                                              .takeDate
+                                                              .day
+                                                              .toString() +
+                                                          '일\n',
+                                                      style: TextStyle(
+                                                          fontSize: 30,
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'NotoSansKR',
+                                                          fontWeight:
+                                                              FontWeight.w800),
+                                                    ),
+                                                    TextSpan(
+                                                      text: _bottleinfo
+                                                              .takeMedicineHist[
+                                                                  0]
+                                                              .takeDate
+                                                              .hour
+                                                              .toString() +
+                                                          ':' +
+                                                          _bottleinfo
+                                                              .takeMedicineHist[
+                                                                  0]
+                                                              .takeDate
+                                                              .minute
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 40,
+                                                          color: Colors.white,
+                                                          fontFamily:
+                                                              'NotoSansKR',
+                                                          fontWeight:
+                                                              FontWeight.w800),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   ],

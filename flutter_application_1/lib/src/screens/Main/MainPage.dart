@@ -58,6 +58,10 @@ class _MainPageState extends State<MainPage> {
                   style: TextStyle(fontSize: 15),
                 ),
               );
+            } else if (snapshot.data == null)
+              return Text('Loading');
+            else if (snapshot.connectionState != ConnectionState.done) {
+              return CircularProgressIndicator();
             } else {
               return Container(
                 margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
