@@ -8,7 +8,6 @@ import '../../utils/user_secure_stoarge.dart';
 import '../../models/Medicine.dart';
 
 import '../Register/SearchMedicine.dart';
-import '../../utils/flutter_material_pickers.dart';
 import '../../models/BottleInfo.dart';
 
 class MainPage extends StatefulWidget {
@@ -271,39 +270,6 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    GestureDetector(
-                      child: Container(
-                        width: size.width * 0.8,
-                        height: 46,
-                        margin: EdgeInsets.only(bottom: 0),
-                        child: FlatButton(
-                          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                          onPressed: () async {
-                            await showMaterialScrollPicker(
-                              context: context,
-                              title: '처방의',
-                              items: doctorlist,
-                              selectedItem: _seletedDoctor,
-                              onChanged: (value) => setState(() {
-                                _seletedDoctor = value;
-                              }),
-                            );
-                          },
-                          child: Text(
-                            '처방의 변경',
-                            textScaleFactor: 1.0,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'Noto',
-                                fontWeight: FontWeight.bold),
-                          ),
-                          color: Color(0xff1674f6),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               );

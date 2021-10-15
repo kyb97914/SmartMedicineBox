@@ -8,11 +8,13 @@ import '../../models/Medicine.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../Components/appbar.dart';
 import '../Components/RoundedButton.dart';
+import '../../models/Doctor.dart';
 
 class DetailMedicine extends StatefulWidget {
   Medicine searchMedicine;
   String bottleId;
-  DetailMedicine({Key key, this.searchMedicine, this.bottleId})
+  List<Doctor> doctorlist;
+  DetailMedicine({Key key, this.searchMedicine, this.bottleId, this.doctorlist})
       : super(key: key);
   @override
   _DetailMedicineState createState() => _DetailMedicineState();
@@ -21,10 +23,16 @@ class DetailMedicine extends StatefulWidget {
 class _DetailMedicineState extends State<DetailMedicine> {
   final medicinedailyDosageController = TextEditingController();
   final medicinetotalDosageController = TextEditingController();
+  String _chosenValue = "담당의 없음";
   //약 등록
   Future<String> patchMedcine() async {
     String usertoken = await UserSecureStorage.getUserToken();
-
+    String doctorid;
+    if (_chosenValue == "담당의 없음") {
+      doctorid = null;
+    } else {
+      for (int i = 0; i < widget.doctorlist.length; i++) {}
+    }
     http.Response response = await http.patch(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + widget.bottleId),
       headers: {"Content-Type": "application/json", "authorization": usertoken},
@@ -179,6 +187,33 @@ class _DetailMedicineState extends State<DetailMedicine> {
                     hintText: "총 약의 갯수를 입력하세요",
                     border: InputBorder.none,
                   ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                width: size.width * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(29),
+                  border: Border.all(),
+                ),
+                child: DropdownButton(
+                  isExpanded: true,
+                  focusColor: Colors.white,
+                  iconEnabledColor: Colors.black,
+                  value: _chosenValue,
+                  items: widget.doctorlist.map(
+                    (value) {
+                      return DropdownMenuItem(
+                          value: value.doctorNm, child: Text(value.doctorNm));
+                    },
+                  ).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _chosenValue = value;
+                    });
+                  },
                 ),
               ),
               RoundedButton(

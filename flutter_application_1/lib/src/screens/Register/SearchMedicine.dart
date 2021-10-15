@@ -10,6 +10,7 @@ import '../../utils/user_secure_stoarge.dart';
 import '../Components/background.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:permission_handler/permission_handler.dart';
+import '../../models/Doctor.dart';
 
 class SearchMedicine extends StatefulWidget {
   String bottleId;
@@ -22,6 +23,8 @@ class _SearchMedicineState extends State<SearchMedicine> {
   List<Medicine> _medicineList = new List<Medicine>();
   final medicineNameController = TextEditingController();
   String medicineId, doctorId, dailyDosage, totalDosage;
+  List<Doctor> _doctorlist = new List<Doctor>();
+
   Future<String> patchMedcine() async {
     String usertoken = await UserSecureStorage.getUserToken();
 
@@ -35,7 +38,8 @@ class _SearchMedicineState extends State<SearchMedicine> {
         body: jsonEncode({
           'medicineId': medicineId,
           'dailyDosage': dailyDosage,
-          'totalDosage': totalDosage
+          'totalDosage': totalDosage,
+          'doctorId': doctorId
         }));
     print(response.body);
     if (response.statusCode == 200) {
@@ -46,6 +50,34 @@ class _SearchMedicineState extends State<SearchMedicine> {
       return "약병에 접근할 권한이 없습니다.";
     } else {
       return "알 수 없는 오류";
+    }
+  }
+
+  Future<String> getDoctorList() async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    http.Response response = await http.get(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'user/doctor'),
+      headers: {"authorization": usertoken},
+    );
+    if (_doctorlist.length != 0) {
+      _doctorlist.clear();
+    }
+    Doctor temp = new Doctor(doctorNm: "담당의 없음");
+    _doctorlist.add(temp);
+    if (response.statusCode == 200) {
+      List<dynamic> values = new List<dynamic>();
+      Map<String, dynamic> map = json.decode(response.body);
+      values = map["doctorList"];
+      for (int i = 0; i < values.length; i++) {
+        Map<String, dynamic> map = values[i];
+        _doctorlist.add(Doctor.fromJson(map));
+      }
+
+      return "GET";
+    } else if (response.statusCode == 404) {
+      return "Not Found";
+    } else {
+      return "Error";
     }
   }
 
@@ -227,6 +259,8 @@ class _SearchMedicineState extends State<SearchMedicine> {
                                   size: 18,
                                 ),
                                 onPressed: () async {
+                                  String savemessage = await getDoctorList();
+                                  print(_doctorlist);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -234,6 +268,7 @@ class _SearchMedicineState extends State<SearchMedicine> {
                                           DetailMedicine(
                                         searchMedicine: _medicineList[index],
                                         bottleId: widget.bottleId,
+                                        doctorlist: _doctorlist,
                                       ),
                                     ),
                                   );

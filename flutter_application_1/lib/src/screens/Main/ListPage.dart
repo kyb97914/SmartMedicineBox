@@ -368,25 +368,6 @@ class _ListPageState extends State<ListPage> {
                                       ),
                                     ),
                                   );
-
-                                  /*
-                            if (_bottleList[index].medicineId == null) {
-                              //약병에 약이 없는 경우
-                            } else {
-                              UserSecureStorage.setBottleId(
-                                  _bottleList[index].bottleId.toString());
-                              UserSecureStorage.setMedicineId(
-                                  _bottleList[index].medicineId.toString());
-                            }
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => DashBoard(
-                                  pageNumber: 0,
-                                ),
-                              ),
-                            );
-                          */
                                 },
                               );
                             },

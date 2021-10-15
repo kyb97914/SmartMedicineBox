@@ -1,25 +1,34 @@
 import 'BottleMedicine.dart';
 
 class Doctor {
-  String fdbType;
-  String doctorId;
-  String feedback;
-  DateTime fdbDtm;
-  BottleMedicine bmId;
+  String validateDoctorLicense;
+  String hospitalNm;
+  String hospitalAddr;
+  String contact;
+  String doctorNm;
 
-  Doctor({this.fdbType, this.doctorId, this.feedback, this.fdbDtm, this.bmId});
+  Doctor(
+      {this.validateDoctorLicense,
+      this.hospitalNm,
+      this.hospitalAddr,
+      this.contact,
+      this.doctorNm});
 
   factory Doctor.fromJson(Map<String, dynamic> parsedJson) {
-    var list = parsedJson['bmId'] as List;
-    List<BottleMedicine> data =
-        list.map((i) => BottleMedicine.fromJson(i)).toList();
-
     return Doctor(
-      fdbType: parsedJson['fdbType'],
-      doctorId: parsedJson['doctorId'],
-      feedback: parsedJson['feedback'],
-      fdbDtm: DateTime.parse(parsedJson['fdbDtm']).toLocal(),
-      bmId: data[0],
+      validateDoctorLicense: parsedJson['validateDoctorLicense'],
+      hospitalNm: parsedJson['hospitalNm'],
+      hospitalAddr: parsedJson['hospitalAddr'],
+      contact: parsedJson['contact'],
+      doctorNm: parsedJson['doctorNm'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        "validateDoctorLicense": validateDoctorLicense,
+        "hospitalNm": hospitalNm,
+        "hospitalAddr": hospitalAddr,
+        "contact": contact,
+        "doctorNm": doctorNm,
+      };
 }
