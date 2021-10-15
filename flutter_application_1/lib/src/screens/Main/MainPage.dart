@@ -18,8 +18,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String _seletedDoctor = '';
   Widget build(BuildContext context) {
-    Medicine _medicineInformation = new Medicine();
-    List<String> doctorlist = ['temp1', 'temp2', 'temp3', 'temp4'];
     BottleInfo _bottleinfo;
     String _bottleId;
 
