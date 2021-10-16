@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import '../shared/colors.dart';
 import './Register/SignInPage.dart';
 import 'Register/SignUpLocal.dart';
 import '../utils/PushManger.dart';

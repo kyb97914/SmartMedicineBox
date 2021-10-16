@@ -1,5 +1,3 @@
-import 'BottleMedicine.dart';
-
 class Doctor {
   String validateDoctorLicense;
   String hospitalNm;

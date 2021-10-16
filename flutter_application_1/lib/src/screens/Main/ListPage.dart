@@ -364,7 +364,7 @@ class _ListPageState extends State<ListPage> {
                                     MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           DashBoard(
-                                        pageNumber: 0,
+                                        pageNumber: 1,
                                       ),
                                     ),
                                   );

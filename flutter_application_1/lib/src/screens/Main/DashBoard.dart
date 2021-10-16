@@ -13,6 +13,7 @@ import 'MainPage.dart';
 import 'FeedBack.dart';
 import '../Components/appbar.dart';
 import '../Components/RoundedButton.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class DashBoard extends StatefulWidget {
   int pageNumber;
@@ -29,6 +30,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   int _selectedIndex = 0;
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     _selectedIndex = widget.pageNumber;
     var _tabs = [
       ineerInformationpage(context),
@@ -48,28 +50,20 @@ class _DashBoardState extends State<DashBoard> {
           child: const Icon(Icons.refresh_outlined),
           backgroundColor: Colors.blue,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.grey,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.white.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          currentIndex: _selectedIndex,
-          onTap: (int index) => {
+        bottomNavigationBar: CurvedNavigationBar(
+          index: widget.pageNumber,
+          height: 50,
+          backgroundColor: Colors.blue,
+          items: <Widget>[
+            Icon(Icons.device_thermostat),
+            Icon(Icons.home),
+            Icon(Icons.feedback)
+          ],
+          onTap: (index) {
             setState(() {
               _onItemTapped(index);
-            })
+            });
           },
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.device_thermostat), label: 'In'),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
-              label: 'Feedback',
-              icon: Icon(Icons.feedback),
-            )
-          ],
         ),
       ),
       onWillPop: () async {
@@ -102,7 +96,6 @@ Widget ineerInformationpage(BuildContext context) {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + bottleid),
       headers: {"authorization": usertoken},
     );
-    print(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> map = json.decode(response.body);
       _bottleinfo = BottleInfo.fromJson(map);

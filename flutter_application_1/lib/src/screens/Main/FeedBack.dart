@@ -20,21 +20,20 @@ class _FeedbackPageState extends State<FeedbackPage> {
     List<Doctor> _doctorlist = new List<Doctor>();
     List<int> _hublist = new List<int>();
 
-    Future<String> getHubList() async {
+    Future<String> getFeedBackList() async {
       String usertoken = await UserSecureStorage.getUserToken();
+      String bottleId = await UserSecureStorage.getBottleId();
       http.Response response = await http.get(
-        Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
+        Uri.encodeFull(
+            DotEnv().env['SERVER_URL'] + 'bottle/feedback/' + bottleId),
         headers: {"authorization": usertoken},
       );
-      List<dynamic> values = new List<dynamic>();
-      if (_hublist.length != 0) {
-        _hublist.clear();
-      }
+
       if (response.statusCode == 200) {
-        values = json.decode(response.body);
-        for (int i = 0; i < values.length; i++) {
-          _hublist.add(values[i]['hubId']);
-        }
+        List<dynamic> values = new List<dynamic>();
+        Map<String, dynamic> map = json.decode(response.body);
+        values = map["feedbackList"];
+        print(values[0]);
         return "get완료";
       } else if (response.statusCode == 404) {
         return "Not Found";
@@ -47,7 +46,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder(
-          future: getHubList(),
+          future: getFeedBackList(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData == false) {
               return CircularProgressIndicator();
