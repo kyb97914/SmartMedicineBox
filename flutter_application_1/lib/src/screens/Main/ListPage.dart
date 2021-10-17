@@ -18,8 +18,7 @@ import '../Register/RegisterBottle.dart';
 import '../../models/BottleInfo.dart';
 
 class ListPage extends StatefulWidget {
-  List<int> hublist;
-  ListPage({Key key, this.hublist}) : super(key: key);
+  ListPage({Key key}) : super(key: key);
 
   @override
   _ListPageState createState() => _ListPageState();

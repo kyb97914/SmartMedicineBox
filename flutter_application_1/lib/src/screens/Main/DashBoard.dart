@@ -6,11 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import '../../utils/user_secure_stoarge.dart';
-import '../../models/Bottle.dart';
 import '../../models/BottleInfo.dart';
 import 'package:Smart_Medicine_Box/src/screens/Main/SettingPage.dart';
 import 'MainPage.dart';
-import 'FeedBack.dart';
+import 'FeedBackPage.dart';
 import '../Components/appbar.dart';
 import '../Components/RoundedButton.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -55,7 +54,7 @@ class _DashBoardState extends State<DashBoard> {
           height: 50,
           backgroundColor: Colors.blue,
           items: <Widget>[
-            Icon(Icons.device_thermostat),
+            Icon(Icons.history),
             Icon(Icons.home),
             Icon(Icons.feedback)
           ],
