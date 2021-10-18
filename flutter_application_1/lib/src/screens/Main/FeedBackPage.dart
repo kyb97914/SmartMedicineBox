@@ -309,55 +309,136 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10.0)),
-                                        title: new Text('피드백 내용'),
+                                        title: new Text(
+                                          '피드백 내용',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                _feedbacklist[index].fdbType ==
+                                                        "CRITICAL"
+                                                    ? Colors.black
+                                                    : (_feedbacklist[index]
+                                                                .fdbType ==
+                                                            "WARN"
+                                                        ? Colors.red
+                                                        : (_feedbacklist[index]
+                                                                    .fdbType ==
+                                                                "CAUTION"
+                                                            ? Colors.orange
+                                                            : Colors.blue)),
+                                          ),
+                                        ),
                                         content: Container(
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: '처방의:\n' +
-                                                      _bottleinfo
-                                                          .doctorInfo.doctorNm +
-                                                      "\n",
+                                          width: 300,
+                                          height: 500,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                height: 30,
+                                                width: 300,
+                                                child: Text(
+                                                  '처방의',
                                                   style: TextStyle(
                                                       fontSize: 20,
-                                                      color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                TextSpan(
-                                                  text: "  \n",
-                                                  style: TextStyle(
-                                                    fontSize: 3,
-                                                    color: Colors.grey.shade600,
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Colors.black,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid),
                                                   ),
                                                 ),
-                                                TextSpan(
-                                                  text: '피드백 내용 :\n' +
-                                                      _feedbacklist[index]
-                                                          .feedback +
-                                                      "\n",
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                height: 30,
+                                                width: 300,
+                                                child: Text(
+                                                  _bottleinfo
+                                                      .doctorInfo.doctorNm,
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ),
+                                              SizedBox(height: 20),
+                                              Container(
+                                                height: 30,
+                                                width: 300,
+                                                child: Text(
+                                                  '피드백 내용',
                                                   style: TextStyle(
-                                                      fontSize: 22,
-                                                      color: Colors.black,
+                                                      fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                TextSpan(
-                                                  text: '시간 :\n' +
-                                                      _feedbacklist[index]
-                                                          .fdbDtm
-                                                          .toString()
-                                                          .substring(0, 16) +
-                                                      "\n",
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Colors.black,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 20),
+                                              Container(
+                                                height: 160,
+                                                width: 300,
+                                                child: Text(
+                                                  _feedbacklist[index].feedback,
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                height: 30,
+                                                width: 300,
+                                                child: Text(
+                                                  '등록 시간',
                                                   style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.black,
+                                                      fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                              ],
-                                            ),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Colors.black,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                width: 300,
+                                                child: Text(
+                                                  _feedbacklist[index]
+                                                      .fdbDtm
+                                                      .toString()
+                                                      .substring(0, 16),
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         actions: <Widget>[
@@ -389,13 +470,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                 child: Row(
                                   children: <Widget>[
                                     RichText(
-                                      overflow: TextOverflow.ellipsis,
+                                      overflow: TextOverflow.fade,
                                       text: TextSpan(
                                         children: [
                                           TextSpan(
                                             text:
-                                                _feedbacklist[index].feedback +
-                                                    "\n",
+                                                _feedbacklist[index]
+                                                            .feedback
+                                                            .length >
+                                                        12
+                                                    ? _feedbacklist[index]
+                                                            .feedback
+                                                            .substring(0, 15) +
+                                                        "...\n"
+                                                    : _feedbacklist[index]
+                                                        .feedback,
                                             style: TextStyle(
                                                 fontSize: 22,
                                                 color: Colors.black,
