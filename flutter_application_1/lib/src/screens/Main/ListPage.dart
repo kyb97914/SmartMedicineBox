@@ -27,6 +27,10 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   List<Bottle> _bottleList = new List<Bottle>();
   List<Hub> _hublist = new List<Hub>();
+
+  final hubNmController = TextEditingController();
+  final bottleNmController = TextEditingController();
+  String hubNm;
   UserProfile userprofile;
   //Doctor Request Alarm
   int newalarm = 0;
@@ -87,6 +91,54 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  //Patch hub
+  Future<String> patchHub(String hubid) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+
+    http.Response response = await http.patch(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub/' + hubid),
+      headers: {"Content-Type": "application/json", "authorization": usertoken},
+      body: jsonEncode(
+        {
+          'hubNm': hubNmController.text,
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      return "Complete";
+    } else if (response.statusCode == 404) {
+      return "약병이 존재하지 않습니다.";
+    } else if (response.statusCode == 403) {
+      return "약병에 접근할 권한이 없습니다.";
+    } else {
+      return "알 수 없는 오류";
+    }
+  }
+
+  Future<String> patchBottle(String bottleid) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    print(bottleid);
+    http.Response response = await http.patch(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/name/' + bottleid),
+      headers: {"Content-Type": "application/json", "authorization": usertoken},
+      body: jsonEncode(
+        {
+          'bottleNm': bottleNmController.text,
+        },
+      ),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return "Complete";
+    } else if (response.statusCode == 404) {
+      return "약병이 존재하지 않습니다.";
+    } else if (response.statusCode == 403) {
+      return "약병에 접근할 권한이 없습니다.";
+    } else {
+      return "알 수 없는 오류";
+    }
+  }
+
   //Get Info
   Future<String> getInfo() async {
     String usertoken = await UserSecureStorage.getUserToken();
@@ -99,6 +151,7 @@ class _ListPageState extends State<ListPage> {
     return "Get 완료";
   }
 
+  //Get bottle Medicine
   Future<String> getbottlemedicine(int bottleid) async {
     String usertoken = await UserSecureStorage.getUserToken();
     http.Response response = await http.get(
@@ -113,6 +166,34 @@ class _ListPageState extends State<ListPage> {
       return "get";
     } else {
       return "error";
+    }
+  }
+
+  //Delete Hub
+  Future<String> deleteHub(int index) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    http.Response response = await http.delete(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub/' + index.toString()),
+      headers: {"authorization": usertoken},
+    );
+    if (response.statusCode == 204) {
+      return "Delete";
+    } else {
+      return "Error";
+    }
+  }
+
+  Future<String> deleteBottle(int index) async {
+    String usertoken = await UserSecureStorage.getUserToken();
+    http.Response response = await http.delete(
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + index.toString()),
+      headers: {"authorization": usertoken},
+    );
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      return "Delete";
+    } else {
+      return "Error";
     }
   }
 
@@ -299,60 +380,200 @@ class _ListPageState extends State<ListPage> {
                                           );
                                         },
                                       )
-                                    : Container(
-                                        height: 140,
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(16.0),
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  bottom: BorderSide(
-                                                      color: Colors.black,
-                                                      width: 1,
-                                                      style: BorderStyle.solid),
-                                                ),
-                                              ),
-                                              height: 35,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    height: 30,
-                                                    child: Center(
-                                                      child: Text(
-                                                        _bottleList[index]
-                                                            .bottleNm,
+                                    : GestureDetector(
+                                        onLongPress: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: new Text(
+                                                    _bottleList[index]
+                                                        .bottleNm),
+                                                content: Container(
+                                                  height: 200,
+                                                  width: 200,
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        '약병 이름 변경',
                                                         style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 18,
-                                                            fontFamily: 'Noto',
+                                                            fontSize: 20,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                       ),
-                                                    ),
+                                                      Container(
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 10),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 20,
+                                                                vertical: 3),
+                                                        height: 60,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(29),
+                                                          border: Border.all(),
+                                                        ),
+                                                        child: TextField(
+                                                          controller:
+                                                              bottleNmController,
+                                                          onChanged: (text) {
+                                                            hubNm = text;
+                                                          },
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                "약병 이름을 입력하세요",
+                                                            border: InputBorder
+                                                                .none,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  new FlatButton(
+                                                    child: new Text('이름 변경'),
+                                                    onPressed: () async {
+                                                      String saveMessage =
+                                                          await patchBottle(
+                                                              _bottleList[index]
+                                                                  .bottleId
+                                                                  .toString());
+                                                      print(saveMessage);
+                                                      if (saveMessage ==
+                                                          "Complete") {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: new Text(
+                                                                  '이름 변경 완료'),
+                                                              content: new Text(
+                                                                  '완료'),
+                                                              actions: <Widget>[
+                                                                new FlatButton(
+                                                                    child: new Text(
+                                                                        'Close'),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (BuildContext context) =>
+                                                                              ListPage(),
+                                                                        ),
+                                                                      );
+                                                                    })
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                  ),
+                                                  new FlatButton(
+                                                    child: new Text('삭제'),
+                                                    onPressed: () async {
+                                                      await deleteBottle(
+                                                          _bottleList[index]
+                                                              .bottleId);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ListPage(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                  new FlatButton(
+                                                    child: new Text('닫기'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
                                                   ),
                                                 ],
-                                              ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 140,
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(16.0),
                                             ),
-                                            SizedBox(height: 5),
-                                            Container(
-                                              height: 70,
-                                              child: Icon(
-                                                Icons.medical_services_outlined,
-                                                size: 70,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                        color: Colors.black,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid),
+                                                  ),
+                                                ),
+                                                height: 35,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      height: 30,
+                                                      child: Center(
+                                                        child: Text(
+                                                          _bottleList[index]
+                                                              .bottleNm,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 18,
+                                                              fontFamily:
+                                                                  'Noto',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            )
-                                          ],
+                                              SizedBox(height: 5),
+                                              Container(
+                                                height: 70,
+                                                child: Icon(
+                                                  Icons
+                                                      .medical_services_outlined,
+                                                  size: 70,
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                 onTap: () async {
@@ -440,6 +661,104 @@ class _ListPageState extends State<ListPage> {
         setState(() {
           hubIndex = index;
         });
+      },
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text(_hublist[index].hubNm),
+              content: Container(
+                  height: 200,
+                  width: 200,
+                  child: Column(
+                    children: [
+                      Text(
+                        '허브 이름 변경',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(29),
+                          border: Border.all(),
+                        ),
+                        child: TextField(
+                          controller: hubNmController,
+                          onChanged: (text) {
+                            hubNm = text;
+                          },
+                          decoration: InputDecoration(
+                            hintText: "허브 이름을 입력하세요",
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text('이름 변경'),
+                  onPressed: () async {
+                    String saveMessage = await patchBottle(
+                        _bottleList[index].bottleId.toString());
+                    print(saveMessage);
+                    if (saveMessage == "Complete") {
+                      Navigator.of(context).pop();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: new Text('이름 변경 완료'),
+                            content: new Text('완료'),
+                            actions: <Widget>[
+                              new FlatButton(
+                                  child: new Text('Close'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ListPage(),
+                                      ),
+                                    );
+                                  })
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+                new FlatButton(
+                  child: new Text('삭제'),
+                  onPressed: () async {
+                    await deleteHub(_hublist[index].hubId);
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => ListPage(),
+                      ),
+                    );
+                  },
+                ),
+                new FlatButton(
+                  child: new Text('닫기'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       },
       child: index == _hublist.length
           ? IconButton(

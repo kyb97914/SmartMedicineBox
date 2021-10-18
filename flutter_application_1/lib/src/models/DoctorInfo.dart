@@ -13,7 +13,7 @@ class DoctorInfo {
       this.doctorId});
 
   factory DoctorInfo.fromJson(Map<String, dynamic> parsedJson) {
-    if (parsedJson['info'] == null) {
+    if (parsedJson == null) {
       return DoctorInfo(
           hospitalNm: null,
           hospitalAddr: null,
