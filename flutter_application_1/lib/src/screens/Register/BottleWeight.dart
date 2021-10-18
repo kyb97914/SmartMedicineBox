@@ -10,26 +10,19 @@ import '../Components/appbar.dart';
 import '../Components/RoundedButton.dart';
 
 class BottleWeight extends StatefulWidget {
-  String bottleId;
-  BottleWeight({Key key, this.bottleId}) : super(key: key);
+  BottleWeight({Key key}) : super(key: key);
   @override
   _BottleWeighteState createState() => _BottleWeighteState();
 }
 
 class _BottleWeighteState extends State<BottleWeight> {
-  Future<String> patchMedcine() async {
+  Future<String> patchWeight() async {
     String usertoken = await UserSecureStorage.getUserToken();
-
+    String bottleid = await UserSecureStorage.getBottleId();
     http.Response response = await http.patch(
-        Uri.encodeFull(
-            DotEnv().env['SERVER_URL'] + 'bottle/' + widget.bottleId),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": usertoken
-        },
-        body: jsonEncode({
-          'bottleId': widget.bottleId,
-        }));
+      Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/weight/' + bottleid),
+      headers: {"Content-Type": "application/json", "authorization": usertoken},
+    );
 
     if (response.statusCode == 200) {
       return "Complete";
@@ -45,7 +38,67 @@ class _BottleWeighteState extends State<BottleWeight> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return MaterialApp(
-      home: Scaffold(appBar: appbar(context), body: Text('df')),
+      home: Scaffold(
+          appBar: appbar(context),
+          body: Center(
+            child: Container(
+              width: size.width * 0.9,
+              height: size.height * 0.9,
+              decoration: BoxDecoration(border: Border.all()),
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Text(
+                    '약병 무게 측정',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 30),
+                  Center(
+                    child: Text(
+                      '약병에 아무것도 두지 않은 채로 측정 버튼을 눌러 주세요',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  RoundedButton(
+                    text: "측정",
+                    color: Colors.blue.shade600,
+                    press: () {
+                      return AlertDialog(
+                        title: new Text('담당의 등록'),
+                        content: FutureBuilder(
+                          future: patchWeight(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData == false) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Error: ${snapshot.error}',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              );
+                            } else {
+                              return Text('측정 완료');
+                            }
+                          },
+                        ),
+                        actions: <Widget>[
+                          new FlatButton(
+                            child: new Text('Close'),
+                            onPressed: () {},
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          )),
     );
   }
 }

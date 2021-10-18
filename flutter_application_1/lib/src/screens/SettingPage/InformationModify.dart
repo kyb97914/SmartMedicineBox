@@ -59,7 +59,6 @@ class _InformationModifyState extends State<InformationModify> {
           'passwordCheck': passwordValidController.text
         }));
     if (response.statusCode == 200) {
-      print('hihi');
       return "Complete";
     } else if (response.statusCode == 404) {
       return "약병이 존재하지 않습니다.";

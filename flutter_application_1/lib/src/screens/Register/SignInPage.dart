@@ -19,6 +19,7 @@ import '../Components/already_have_an_account_acheck.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -37,6 +38,31 @@ class _SignInPageState extends State<SignInPage> {
   String password;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  bool _isKakaoTalkInstalled = false;
+
+  _issueAccessToken(String authCode) async {
+    try {
+      var token = await AuthApi.instance.issueAccessToken(authCode);
+      AccessTokenStore.instance.toStore(token);
+      var user = await UserApi.instance.me();
+
+      _socialLoginInfo['email'] = user.kakaoAccount.email;
+      _socialLoginInfo['accesstoken'] = token.accessToken;
+      _socialLoginInfo['type'] = 'kakao';
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _loginWithKakao() async {
+    try {
+      var code = await AuthCodeClient.instance.request();
+      await _issueAccessToken(code);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   LocalUser user;
   List<Hub> _hublist = new List<Hub>(); //허브이름을 만들어야 할 것 같은데 임시로 허브 id만 고르게 함
@@ -57,8 +83,7 @@ class _SignInPageState extends State<SignInPage> {
       idToken: googleAuth.idToken,
     );
     UserCredential authResult = await _auth.signInWithCredential(credential);
-    User user = authResult.user;
-    _socialLoginInfo['email'] = user.email;
+    _socialLoginInfo['email'] = authResult.user.email;
     _socialLoginInfo['accesstoken'] = googleAuth.accessToken;
     _socialLoginInfo['type'] = 'google';
     return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -149,191 +174,246 @@ class _SignInPageState extends State<SignInPage> {
         }
       },
       child: Scaffold(
-          body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Background(
-          child: ListView(
-            padding: const EdgeInsets.all(40),
-            children: <Widget>[
-              SizedBox(
-                height: size.height * 0.05,
-              ),
-              Center(
-                child: Text(
-                  "로그인",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Background(
+            child: ListView(
+              padding: const EdgeInsets.all(40),
+              children: <Widget>[
+                SizedBox(
+                  height: size.height * 0.05,
                 ),
-              ),
-              SizedBox(height: size.height * 0.05),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-                width: size.width * 0.8,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(29),
-                  border: Border.all(),
-                ),
-                child: TextField(
-                  onChanged: (text) {
-                    email = text;
-                  },
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    errorText: _validateEmail ? '등록되지 않은 아이디입니다.' : null,
-                    icon: Icon(
-                      Icons.email,
-                      color: Colors.black,
-                    ),
-                    hintText: "이메일 주소",
-                    border: InputBorder.none,
+                Center(
+                  child: Text(
+                    "로그인",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-                width: size.width * 0.8,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(29),
-                  border: Border.all(),
-                ),
-                child: TextField(
-                  controller: passwordController,
-                  onChanged: (text) {
-                    password = text;
-                  },
-                  obscureText: !passwordVisible,
-                  decoration: InputDecoration(
-                    errorText: _validatePassword ? '비밀번호가 일치하지 않습니다.' : null,
-                    icon: Icon(
-                      Icons.lock,
-                      color: Colors.black,
-                    ),
-                    hintText: "비밀 번호 입력",
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
+                SizedBox(height: size.height * 0.05),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                  width: size.width * 0.8,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(29),
+                    border: Border.all(),
+                  ),
+                  child: TextField(
+                    onChanged: (text) {
+                      email = text;
+                    },
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      errorText: _validateEmail ? '등록되지 않은 아이디입니다.' : null,
                       icon: Icon(
-                        // Based on passwordVisible state choose the icon
-                        passwordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        Icons.email,
                         color: Colors.black,
                       ),
-                      onPressed: () {
-                        // Update the state i.e. toogle the state of passwordVisible variable
-                        setState(() {
-                          passwordVisible = !passwordVisible;
-                        });
-                      },
+                      hintText: "이메일 주소",
+                      border: InputBorder.none,
                     ),
                   ),
                 ),
-              ),
-              RoundedButton(
-                text: "로그인",
-                press: () async {
-                  String saveMessage = await login(
-                      emailController.text, passwordController.text, user);
-                  if (emailController.text.isEmpty ||
-                      passwordController.text.isEmpty) {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: new Text('이메일 & 비밀번호'),
-                            content: new Text('이메일과 비밀번호를 입력해주세요.'),
-                            actions: <Widget>[
-                              new FlatButton(
-                                  child: new Text('Close'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  })
-                            ],
-                          );
-                        });
-                  } else {
-                    if (saveMessage == "로그인 성공") {
-                      UserSecureStorage.setUserType('Local');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => ListPage(),
-                        ),
-                      );
-                    } else {
-                      print('Error');
-                    }
-                  }
-                },
-              ),
-              SizedBox(height: size.height * 0.07),
-              AlreadyHaveAnAccountCheck(
-                login: true,
-                press: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => SignUpLocal()));
-                },
-              ),
-              OrDivider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SocalIcon(
-                    iconSrc: "images/google-plus.svg",
-                    press: () async {
-                      await signInWithGoogle();
-                      await signin_Social();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => ListPage(),
-                        ),
-                      );
-                    },
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                  width: size.width * 0.8,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(29),
+                    border: Border.all(),
                   ),
-                  SizedBox(width: size.width * 0.05),
-                  SocalIcon(
-                    iconSrc: "images/naver.svg",
-                    press: () async {
-                      await _naverLogin();
-                      String saveMessage = await signin_Social();
+                  child: TextField(
+                    controller: passwordController,
+                    onChanged: (text) {
+                      password = text;
+                    },
+                    obscureText: !passwordVisible,
+                    decoration: InputDecoration(
+                      errorText: _validatePassword ? '비밀번호가 일치하지 않습니다.' : null,
+                      icon: Icon(
+                        Icons.lock,
+                        color: Colors.black,
+                      ),
+                      hintText: "비밀 번호 입력",
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          // Based on passwordVisible state choose the icon
+                          passwordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.black,
+                        ),
+                        onPressed: () {
+                          // Update the state i.e. toogle the state of passwordVisible variable
+                          setState(() {
+                            passwordVisible = !passwordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                RoundedButton(
+                  text: "로그인",
+                  press: () async {
+                    String saveMessage = await login(
+                        emailController.text, passwordController.text, user);
+                    if (emailController.text.isEmpty ||
+                        passwordController.text.isEmpty) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: new Text('이메일 & 비밀번호'),
+                              content: new Text('이메일과 비밀번호를 입력해주세요.'),
+                              actions: <Widget>[
+                                new FlatButton(
+                                    child: new Text('Close'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    })
+                              ],
+                            );
+                          });
+                    } else {
                       if (saveMessage == "로그인 성공") {
-                        UserSecureStorage.setUserType('Social');
-                        var result = await getHubList();
-                        if (result == "Not Found") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  RegisterHub(modify_hub: 0),
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => ListPage(),
-                            ),
+                        UserSecureStorage.setUserType('Local');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => ListPage(),
+                          ),
+                        );
+                      } else {
+                        print('Error');
+                      }
+                    }
+                  },
+                ),
+                SizedBox(height: size.height * 0.07),
+                AlreadyHaveAnAccountCheck(
+                  login: true,
+                  press: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => SignUpLocal()));
+                  },
+                ),
+                OrDivider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SocalIcon(
+                      iconSrc: "images/google-plus.svg",
+                      press: () async {
+                        await signInWithGoogle();
+                        String savemessage = await signin_Social();
+                        if (savemessage == "로그인 성공") {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: new Text('로그인'),
+                                content: new Text('로그인 성공'),
+                                actions: <Widget>[
+                                  new FlatButton(
+                                    child: new Text('Close'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            },
                           );
                         }
-                      }
-                    },
-                  ),
-                  SizedBox(width: size.width * 0.05),
-                  SocalIcon(
-                    iconSrc: "images/google-plus.svg",
-                    press: () {},
-                  ),
-                ],
-              )
-            ],
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => ListPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(width: size.width * 0.05),
+                    SocalIcon(
+                      iconSrc: "images/naver.svg",
+                      press: () async {
+                        await _naverLogin();
+                        String saveMessage = await signin_Social();
+                        if (saveMessage == "로그인 성공") {
+                          UserSecureStorage.setUserType('Social');
+                          var result = await getHubList();
+                          if (result == "Not Found") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    RegisterHub(modify_hub: 0),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => ListPage(),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                    SizedBox(width: size.width * 0.05),
+                    GestureDetector(
+                      onTap: () async {
+                        await _loginWithKakao();
+                        String saveMessage = await signin_Social();
+                        if (saveMessage == "로그인 성공") {
+                          UserSecureStorage.setUserType('Social');
+                          var result = await getHubList();
+                          if (result == "Not Found") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    RegisterHub(modify_hub: 0),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => ListPage(),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      child: Container(
+                          height: 60,
+                          width: 60,
+                          margin: EdgeInsets.symmetric(horizontal: 1),
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.white,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset('images/kakao-talk.png')),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

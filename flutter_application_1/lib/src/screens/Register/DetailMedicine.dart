@@ -28,10 +28,9 @@ class _DetailMedicineState extends State<DetailMedicine> {
   Future<String> patchMedcine() async {
     String usertoken = await UserSecureStorage.getUserToken();
     String doctorid;
+    print(_chosenValue);
     if (_chosenValue == "담당의 없음") {
       doctorid = null;
-    } else {
-      for (int i = 0; i < widget.doctorlist.length; i++) {}
     }
     http.Response response = await http.patch(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + widget.bottleId),
@@ -40,7 +39,8 @@ class _DetailMedicineState extends State<DetailMedicine> {
         {
           'medicineId': widget.searchMedicine.medicineId,
           'dailyDosage': medicinedailyDosageController.text,
-          'totalDosage': medicinetotalDosageController.text
+          'totalDosage': medicinetotalDosageController.text,
+          'doctorId': _chosenValue,
         },
       ),
     );
@@ -206,7 +206,7 @@ class _DetailMedicineState extends State<DetailMedicine> {
                   items: widget.doctorlist.map(
                     (value) {
                       return DropdownMenuItem(
-                          value: value.doctorNm, child: Text(value.doctorNm));
+                          value: value.doctorId, child: Text(value.doctorNm));
                     },
                   ).toList(),
                   onChanged: (value) {

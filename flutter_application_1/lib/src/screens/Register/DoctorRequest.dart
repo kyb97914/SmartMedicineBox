@@ -147,7 +147,6 @@ class _DoctorRequestState extends State<DoctorRequest> {
                                         await postDoctorRequest(
                                             _doctorlist[index].doctorId);
                                     if (savemessage == "post완료") {
-                                      print("object");
                                       await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {

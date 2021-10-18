@@ -117,7 +117,6 @@ class _ListPageState extends State<ListPage> {
 
   Future<String> patchBottle(String bottleid) async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print(bottleid);
     http.Response response = await http.patch(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/name/' + bottleid),
       headers: {"Content-Type": "application/json", "authorization": usertoken},
@@ -127,7 +126,6 @@ class _ListPageState extends State<ListPage> {
         },
       ),
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return "Complete";
     } else if (response.statusCode == 404) {
@@ -189,7 +187,6 @@ class _ListPageState extends State<ListPage> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + index.toString()),
       headers: {"authorization": usertoken},
     );
-    print(response.statusCode);
     if (response.statusCode == 204) {
       return "Delete";
     } else {
@@ -446,7 +443,6 @@ class _ListPageState extends State<ListPage> {
                                                               _bottleList[index]
                                                                   .bottleId
                                                                   .toString());
-                                                      print(saveMessage);
                                                       if (saveMessage ==
                                                           "Complete") {
                                                         Navigator.of(context)
@@ -650,7 +646,23 @@ class _ListPageState extends State<ListPage> {
         ),
       ),
       onWillPop: () {
-        SystemNavigator.pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text('앱 종료'),
+              content: new Text('앱이 종료 됩니다.'),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text('확인'),
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -705,9 +717,8 @@ class _ListPageState extends State<ListPage> {
                 new FlatButton(
                   child: new Text('이름 변경'),
                   onPressed: () async {
-                    String saveMessage = await patchBottle(
-                        _bottleList[index].bottleId.toString());
-                    print(saveMessage);
+                    String saveMessage =
+                        await patchHub(_hublist[index].hubId.toString());
                     if (saveMessage == "Complete") {
                       Navigator.of(context).pop();
                       showDialog(

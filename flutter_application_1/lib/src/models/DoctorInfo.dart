@@ -28,7 +28,6 @@ class DoctorInfo {
             temp.substring(3, 7) +
             '-' +
             temp.substring(7, 11);
-        print(temp);
       }
       return DoctorInfo(
           hospitalNm: parsedJson['info']['hospitalNm'],

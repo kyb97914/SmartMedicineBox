@@ -70,6 +70,7 @@ flutter:
     - images/
     - images/main_logo.png
     - images/setting.png
+    - images/kakao-talk.png
 
 fonts:
   # - family: Raleway

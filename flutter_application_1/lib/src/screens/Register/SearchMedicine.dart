@@ -11,6 +11,7 @@ import '../Components/background.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:permission_handler/permission_handler.dart';
 import '../../models/Doctor.dart';
+import '../../screens/Main/DashBoard.dart';
 
 class SearchMedicine extends StatefulWidget {
   String bottleId;
@@ -41,7 +42,6 @@ class _SearchMedicineState extends State<SearchMedicine> {
           'totalDosage': totalDosage,
           'doctorId': doctorId
         }));
-    print(response.body);
     if (response.statusCode == 200) {
       return "Complete";
     } else if (response.statusCode == 404) {
@@ -62,9 +62,10 @@ class _SearchMedicineState extends State<SearchMedicine> {
     if (_doctorlist.length != 0) {
       _doctorlist.clear();
     }
-    Doctor temp = new Doctor(doctorNm: "담당의 없음");
+    Doctor temp = new Doctor(doctorNm: "담당의 없음", doctorId: "담당의 없음");
     _doctorlist.add(temp);
     if (response.statusCode == 200) {
+      print(response.body);
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["doctorList"];
@@ -98,14 +99,12 @@ class _SearchMedicineState extends State<SearchMedicine> {
 
   Future<String> postMeicineList() async {
     String usertoken = await UserSecureStorage.getUserToken();
-    print(Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'medicine'));
     http.Response response = await http.get(
       Uri.encodeFull(DotEnv().env['SERVER_URL'] +
           'medicine?keyword=' +
           medicineNameController.text),
       headers: {"Content-Type": "application/json", "authorization": usertoken},
     );
-    print(response.body);
     if (_medicineList.length != 0) {
       _medicineList.clear();
     }
@@ -125,7 +124,6 @@ class _SearchMedicineState extends State<SearchMedicine> {
 
   Future<void> scan() async {
     String temp = await scanner.scan();
-    print(temp);
     setState(() {
       medicineId = temp.split('/')[0];
       dailyDosage = temp.split('/')[1];
@@ -174,6 +172,7 @@ class _SearchMedicineState extends State<SearchMedicine> {
                           textInputAction: TextInputAction.go,
                           onSubmitted: (value) async {
                             await postMeicineList();
+                            setState(() {});
                           },
                           controller: medicineNameController,
                           decoration: InputDecoration(
@@ -201,9 +200,52 @@ class _SearchMedicineState extends State<SearchMedicine> {
                           onPressed: () async {
                             await checkPermission();
                             await scan();
-                            await patchMedcine();
-                            print(qrCode);
+                            String saveMessage = await patchMedcine();
                             //검색 함수를 여기다가
+                            if (saveMessage == "Complete") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('약 등록'),
+                                    content: new Text('약 등록이 완료 되었습니다.'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                          child: new Text('Close'),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        DashBoard(
+                                                  pageNumber: 1,
+                                                ),
+                                              ),
+                                            );
+                                          })
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('약 등록'),
+                                    content: new Text('오류 발생'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                          child: new Text('Close'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          })
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                       ),
@@ -260,7 +302,6 @@ class _SearchMedicineState extends State<SearchMedicine> {
                                 ),
                                 onPressed: () async {
                                   String savemessage = await getDoctorList();
-                                  print(_doctorlist);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

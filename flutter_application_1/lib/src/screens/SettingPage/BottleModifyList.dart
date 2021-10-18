@@ -52,7 +52,6 @@ class _BottleModifyListState extends State<BottleModifyList> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'bottle/' + index.toString()),
       headers: {"authorization": usertoken},
     );
-    print(response.statusCode);
     if (response.statusCode == 204) {
       return "Delete";
     } else {

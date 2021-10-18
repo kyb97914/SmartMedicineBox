@@ -4,13 +4,15 @@ class Doctor {
   String hospitalAddr;
   String contact;
   String doctorNm;
+  String doctorId;
 
   Doctor(
       {this.validateDoctorLicense,
       this.hospitalNm,
       this.hospitalAddr,
       this.contact,
-      this.doctorNm});
+      this.doctorNm,
+      this.doctorId});
 
   factory Doctor.fromJson(Map<String, dynamic> parsedJson) {
     return Doctor(
@@ -18,6 +20,7 @@ class Doctor {
       hospitalNm: parsedJson['hospitalNm'],
       hospitalAddr: parsedJson['hospitalAddr'],
       contact: parsedJson['contact'],
+      doctorId: parsedJson['doctorId'],
       doctorNm: parsedJson['doctorNm'],
     );
   }
@@ -28,5 +31,6 @@ class Doctor {
         "hospitalAddr": hospitalAddr,
         "contact": contact,
         "doctorNm": doctorNm,
+        "doctorId": doctorId,
       };
 }

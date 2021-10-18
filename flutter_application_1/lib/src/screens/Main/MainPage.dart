@@ -1,3 +1,4 @@
+import 'package:Smart_Medicine_Box/src/screens/Register/BottleWeight.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
     BottleInfo _bottleinfo;
     String _bottleId;
 
+    //get bottle medicine
     Future<String> getbottlemedicine() async {
       String usertoken = await UserSecureStorage.getUserToken();
       String bottleid = await UserSecureStorage.getBottleId();
@@ -35,6 +37,30 @@ class _MainPageState extends State<MainPage> {
         return "get";
       } else {
         return "error";
+      }
+    }
+
+    //약병 무게 설정
+    Future<String> patchWeight() async {
+      String usertoken = await UserSecureStorage.getUserToken();
+      String bottleid = await UserSecureStorage.getBottleId();
+      http.Response response = await http.patch(
+        Uri.encodeFull(
+            DotEnv().env['SERVER_URL'] + 'bottle/weight/' + bottleid),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": usertoken
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return "Complete";
+      } else if (response.statusCode == 404) {
+        return "약병이 존재하지 않습니다.";
+      } else if (response.statusCode == 403) {
+        return "약병에 접근할 권한이 없습니다.";
+      } else {
+        return "알 수 없는 오류";
       }
     }
 
@@ -254,6 +280,38 @@ class _MainPageState extends State<MainPage> {
                           },
                           child: Text(
                             '약 검색',
+                            textScaleFactor: 1.0,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Noto',
+                                fontWeight: FontWeight.bold),
+                          ),
+                          color: Color(0xff1674f6),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50)),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      child: Container(
+                        width: size.width * 0.8,
+                        height: 46,
+                        margin: EdgeInsets.only(bottom: 0),
+                        child: FlatButton(
+                          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    BottleWeight(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            '약병 무게 등록',
                             textScaleFactor: 1.0,
                             style: TextStyle(
                                 color: Colors.white,

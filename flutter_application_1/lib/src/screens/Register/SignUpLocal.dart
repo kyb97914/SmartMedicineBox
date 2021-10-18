@@ -14,6 +14,7 @@ import '../Components/already_have_an_account_acheck.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -50,6 +51,30 @@ class _SignUpLocalState extends State<SignUpLocal> {
     "accesstoken": '',
   };
 
+  _issueAccessToken(String authCode) async {
+    try {
+      var token = await AuthApi.instance.issueAccessToken(authCode);
+      AccessTokenStore.instance.toStore(token);
+      print(token.accessToken);
+      var user = await UserApi.instance.me();
+      print(user.kakaoAccount);
+
+      _socialSignupInfo['accesstoken'] = token.accessToken;
+      _socialSignupInfo['type'] = 'kakao';
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  _loginWithKakao() async {
+    try {
+      var code = await AuthCodeClient.instance.request();
+      await _issueAccessToken(code);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<UserCredential> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -58,8 +83,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    UserCredential authResult = await _auth.signInWithCredential(credential);
-    User user = authResult.user;
+
     _socialSignupInfo['type'] = 'google';
     _socialSignupInfo['accesstoken'] = googleAuth.idToken;
     return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -312,7 +336,32 @@ class _SignUpLocalState extends State<SignUpLocal> {
                           iconSrc: "images/google-plus.svg",
                           press: () async {
                             await signInWithGoogle();
-                            await signup_Social();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                         SizedBox(width: size.width * 0.05),
@@ -320,13 +369,78 @@ class _SignUpLocalState extends State<SignUpLocal> {
                           iconSrc: "images/naver.svg",
                           press: () async {
                             await _naverLogin();
-                            await signup_Social();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                         SizedBox(width: size.width * 0.05),
-                        SocalIcon(
-                          iconSrc: "images/google-plus.svg",
-                          press: () {},
+                        GestureDetector(
+                          onTap: () async {
+                            await _loginWithKakao();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: Container(
+                              height: 60,
+                              width: 60,
+                              margin: EdgeInsets.symmetric(horizontal: 1),
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.white,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset('images/kakao-talk.png')),
                         ),
                       ],
                     )
@@ -515,7 +629,32 @@ class _SignUpLocalState extends State<SignUpLocal> {
                           iconSrc: "images/google-plus.svg",
                           press: () async {
                             await signInWithGoogle();
-                            await signup_Social();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                         SizedBox(width: size.width * 0.05),
@@ -523,13 +662,78 @@ class _SignUpLocalState extends State<SignUpLocal> {
                           iconSrc: "images/naver.svg",
                           press: () async {
                             await _naverLogin();
-                            await signup_Social();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
                         SizedBox(width: size.width * 0.05),
-                        SocalIcon(
-                          iconSrc: "images/google-plus.svg",
-                          press: () {},
+                        GestureDetector(
+                          onTap: () async {
+                            await _loginWithKakao();
+                            String savemessage = await signup_Social();
+                            if (savemessage == "정보 입력 완료") {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text('회원가입'),
+                                    content: new Text('회원가입 완료'),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text('Close'),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginPage(),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: Container(
+                              height: 60,
+                              width: 60,
+                              margin: EdgeInsets.symmetric(horizontal: 1),
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: Colors.white,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset('images/kakao-talk.png')),
                         ),
                       ],
                     )

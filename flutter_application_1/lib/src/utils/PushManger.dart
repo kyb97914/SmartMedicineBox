@@ -83,8 +83,6 @@ class PushManager {
       _requestIOSPermission();
     }
     _firebaseMessaging.getToken().then((token) {
-      print('devicetoken');
-      print(token);
       UserSecureStorage.setDeviceToken(token);
       // 장고 서버에 token알려주기
     });
@@ -95,7 +93,7 @@ class PushManager {
       onMessage: (Map<String, dynamic> message) async {
         // Triggered if a message is received whilst the app is in foreground
         _showNotification();
-        _ddd();
+
         print('on message $message');
       },
       onResume: (Map<String, dynamic> message) async {
@@ -107,10 +105,6 @@ class PushManager {
         print('on launch $message');
       },
     );
-  }
-
-  Future<void> _ddd() async {
-    await print('adsf');
   }
 
   Future<void> _showNotification() async {

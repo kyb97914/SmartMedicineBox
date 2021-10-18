@@ -17,7 +17,6 @@ class Medicine {
       this.warn});
 
   factory Medicine.fromJson(Map<String, dynamic> parsedJson) {
-    print(parsedJson);
     if (parsedJson == null) {
       return Medicine(
         medicineId: null,
@@ -37,7 +36,6 @@ class Medicine {
       } else {
         temp = parsedJson['name'];
       }
-      print(parsedJson);
       return Medicine(
         medicineId: parsedJson['medicineId'],
         antiEffect: parsedJson['antiEffect'],
