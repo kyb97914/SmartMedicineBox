@@ -15,6 +15,15 @@ class UserSecureStorage {
 
   static const _keyhubId = 'hubid';
 
+  static const _keyusertype = 'usertype';
+
+  //User Type: [Social]: 소셜 로그인 [Local]: Local 로그인
+  static Future setUserType(String usertype) async =>
+      await _storage.write(key: _keyusertype, value: usertype);
+
+  static Future<String> getUserType() async =>
+      await _storage.read(key: _keyusertype);
+
   static Future setUserId(String userid) async =>
       await _storage.write(key: _keyUserId, value: userid);
 

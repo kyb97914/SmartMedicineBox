@@ -7,7 +7,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import '../../utils/user_secure_stoarge.dart';
 import '../../models/BottleInfo.dart';
-import 'package:Smart_Medicine_Box/src/screens/Main/SettingPage.dart';
 import 'MainPage.dart';
 import 'FeedBackPage.dart';
 import '../Components/appbar.dart';

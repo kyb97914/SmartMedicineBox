@@ -79,6 +79,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                   style: TextStyle(fontSize: 15),
                 ),
               );
+            } else if (snapshot.connectionState != ConnectionState.done) {
+              return CircularProgressIndicator();
             } else {
               return Container(
                 height: size.height * 0.9,

@@ -255,6 +255,7 @@ class _SignInPageState extends State<SignInPage> {
                         });
                   } else {
                     if (saveMessage == "로그인 성공") {
+                      UserSecureStorage.setUserType('Local');
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -301,6 +302,7 @@ class _SignInPageState extends State<SignInPage> {
                       await _naverLogin();
                       String saveMessage = await signin_Social();
                       if (saveMessage == "로그인 성공") {
+                        UserSecureStorage.setUserType('Social');
                         var result = await getHubList();
                         if (result == "Not Found") {
                           Navigator.push(
@@ -311,7 +313,6 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                           );
                         } else {
-                          print('asdgasdf');
                           Navigator.push(
                             context,
                             MaterialPageRoute(

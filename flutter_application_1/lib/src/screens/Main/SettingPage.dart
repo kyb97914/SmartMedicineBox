@@ -2,6 +2,10 @@ import 'package:Smart_Medicine_Box/src/screens/SettingPage/HubModifyList.dart';
 import 'package:flutter/material.dart';
 import 'package:Smart_Medicine_Box/src/screens/Main/DashBoard.dart';
 import 'package:Smart_Medicine_Box/src/screens/SettingPage/BottleModifyList.dart';
+import 'package:Smart_Medicine_Box/src/screens/Components/appbar.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:Smart_Medicine_Box/src/screens/Components/RoundedButton.dart';
+import 'package:Smart_Medicine_Box/src/screens/SettingPage/InformationModify.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -14,51 +18,7 @@ class _SettingPageState extends State<SettingPage> {
     return MaterialApp(
       title: 'Welcome to Flutter',
       home: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          backgroundColor: Colors.white,
-          title: Text(
-            'Smart Medicine Box',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                fontFamily: 'Noto',
-                fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.settings,
-                color: Colors.black,
-              ),
-              onPressed: () {},
-            )
-          ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              DrawerHeader(
-                child: Text('Drawer Header'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                title: Text('Test 1'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('Test 2'),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('Test 3'),
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
+        appBar: appbar(context),
         body: Container(
           height: size.height * 0.9,
           margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
@@ -87,85 +47,37 @@ class _SettingPageState extends State<SettingPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                      width: size.width * 0.8,
-                      height: size.height * 0.13,
-                      margin: EdgeInsets.only(bottom: 0),
-                      child: FlatButton(
-                        height: size.height * 0.07,
-                        onPressed: () {},
-                        child: Text(
-                          '알림 설정',
-                          textScaleFactor: 1.0,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontFamily: 'Noto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        color: Color(0xff0B1E33),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                      ),
+                    RoundedButton(
+                      text: "유저 정보 변경",
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      press: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                InformationModify(),
+                          ),
+                        );
+                      },
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                      width: size.width * 0.8,
-                      height: size.height * 0.13,
-                      margin: EdgeInsets.only(bottom: 0),
-                      child: FlatButton(
-                        height: size.height * 0.07,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    HubModifyList(),
-                              ));
-                        },
-                        child: Text(
-                          '허브 관리',
-                          textScaleFactor: 1.0,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontFamily: 'Noto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        color: Color(0xff0B1E33),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                      ),
+                    RoundedButton(
+                      text: "허브 관리",
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      press: () {},
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                      width: size.width * 0.8,
-                      height: size.height * 0.13,
-                      margin: EdgeInsets.only(bottom: 0),
-                      child: FlatButton(
-                        height: size.height * 0.07,
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    BottleModifyList(),
-                              ));
-                        },
-                        child: Text(
-                          '약병 관리',
-                          textScaleFactor: 1.0,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontFamily: 'Noto',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        color: Color(0xff0B1E33),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                      ),
+                    RoundedButton(
+                      text: "약병 관리",
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      press: () {},
+                    ),
+                    RoundedButton(
+                      text: "로그 아웃",
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      press: () {},
                     ),
                   ],
                 ),
@@ -173,36 +85,26 @@ class _SettingPageState extends State<SettingPage> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.grey,
-          selectedItemColor: Colors.white.withOpacity(.60),
-          unselectedItemColor: Colors.white.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          currentIndex: 0,
-          onTap: (int index) => {
-            setState(
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        DashBoard(pageNumber: index),
-                  ),
-                );
-              },
-            )
-          },
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.device_thermostat), label: 'In'),
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
-              label: 'Out',
-              icon: Icon(Icons.access_time),
-            )
+        bottomNavigationBar: CurvedNavigationBar(
+          index: 1,
+          height: 50,
+          backgroundColor: Colors.blue,
+          items: <Widget>[
+            Icon(Icons.history),
+            Icon(Icons.home),
+            Icon(Icons.feedback),
           ],
+          onTap: (index) {
+            setState(() {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      DashBoard(pageNumber: index),
+                ),
+              );
+            });
+          },
         ),
       ),
     );
