@@ -629,7 +629,7 @@ Widget ineerInformationpage(BuildContext context) {
                                                   ? '-'
                                                   : _bottleinfo
                                                       .takeMedicineHist[0]
-                                                      .dosage
+                                                      .balance
                                                       .toString(),
                                               textAlign: TextAlign.center,
                                               textScaleFactor: 1.0,

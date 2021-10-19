@@ -46,7 +46,8 @@ class _SignInPageState extends State<SignInPage> {
       var token = await AuthApi.instance.issueAccessToken(authCode);
       AccessTokenStore.instance.toStore(token);
       var user = await UserApi.instance.me();
-
+      print('asdg');
+      print('token: ' + token.accessToken);
       _socialLoginInfo['email'] = user.kakaoAccount.email;
       _socialLoginInfo['accesstoken'] = token.accessToken;
       _socialLoginInfo['type'] = 'kakao';
