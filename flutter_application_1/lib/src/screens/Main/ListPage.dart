@@ -71,11 +71,12 @@ class _ListPageState extends State<ListPage> {
       Uri.encodeFull(DotEnv().env['SERVER_URL'] + 'hub'),
       headers: {"authorization": usertoken},
     );
-
+    print(response.statusCode);
     if (_hublist.length != 0) {
       _hublist.clear();
     }
     if (response.statusCode == 200) {
+      print(response.body);
       List<dynamic> values = new List<dynamic>();
       Map<String, dynamic> map = json.decode(response.body);
       values = map["hubList"];
@@ -83,8 +84,11 @@ class _ListPageState extends State<ListPage> {
         Map<String, dynamic> map = values[i];
         _hublist.add(Hub.fromJson(map));
       }
+      print(_hublist.length);
       return "get완료";
     } else if (response.statusCode == 404) {
+      print(_hublist.length);
+      print("asdgasdf");
       return "Not Found";
     } else {
       return "Error";
@@ -300,7 +304,7 @@ class _ListPageState extends State<ListPage> {
                     height: 40,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _hublist.length + 1,
+                      itemCount: _hublist.length==0? 1 :_hublist.length + 1,
                       itemBuilder: (BuildContext context, int index) =>
                           buildHub(index),
                     ),
@@ -314,7 +318,7 @@ class _ListPageState extends State<ListPage> {
                     ),
                   ),
                   FutureBuilder(
-                    future: getBottleList(_hublist[hubIndex].hubId),
+                    future: _hublist.length==0? getBottleList(0):getBottleList(_hublist[hubIndex].hubId),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData == false) {
                         return CircularProgressIndicator();

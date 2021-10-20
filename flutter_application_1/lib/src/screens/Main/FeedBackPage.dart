@@ -59,6 +59,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
         _bottleinfo = BottleInfo.fromJson(map);
+        print(_bottleinfo.doctorInfo.doctorNm);
         return "get";
       } else {
         return "error";
@@ -124,8 +125,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: '처방의 : ' +
-                                          _bottleinfo.doctorInfo.doctorNm +
+                                      text: _bottleinfo.doctorInfo.doctorNm==null? " 처방의 :" :"처방의 : " + _bottleinfo.doctorInfo.doctorNm +
                                           "\n",
                                       style: TextStyle(
                                           fontSize: 22,
@@ -141,7 +141,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                     ),
                                     TextSpan(
                                       text:
-                                          _bottleinfo.doctorInfo.contact + "\n",
+                                          _bottleinfo.doctorInfo.contact==null? "-":_bottleinfo.doctorInfo.contact + "\n",
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey.shade600,
@@ -155,7 +155,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: _bottleinfo.doctorInfo.hospitalNm,
+                                      text: _bottleinfo.doctorInfo.hospitalNm==null?'-':_bottleinfo.doctorInfo.hospitalNm,
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey.shade600,
@@ -188,7 +188,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               Container(
                                 child: Icon(
                                   Icons.circle,
-                                  color: Colors.blue,
+                                  color: Color(0xff337DFF),
                                 ),
                               ),
                               SizedBox(height: 1),
@@ -216,7 +216,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               Container(
                                 child: Icon(
                                   Icons.circle,
-                                  color: Colors.orange,
+                                  color: Color(0xffFFE77B),
                                 ),
                               ),
                               SizedBox(height: 1),
@@ -244,7 +244,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               Container(
                                 child: Icon(
                                   Icons.circle,
-                                  color: Colors.red,
+                                  color: Color(0xffFF8941),
                                 ),
                               ),
                               SizedBox(height: 1),
@@ -269,7 +269,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               Container(
                                 child: Icon(
                                   Icons.circle,
-                                  color: Colors.black,
+                                  color: Color(0xffE40000),
                                 ),
                               ),
                               SizedBox(height: 1),
@@ -503,14 +503,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
                                     Icons.circle,
                                     color: _feedbacklist[index].fdbType ==
                                             "CRITICAL"
-                                        ? Colors.black
+                                        ? Color(0xffE40000)
                                         : (_feedbacklist[index].fdbType ==
                                                 "WARN"
-                                            ? Colors.red
+                                            ? Color(0xffFF8941)
                                             : (_feedbacklist[index].fdbType ==
                                                     "CAUTION"
-                                                ? Colors.orange
-                                                : Colors.blue)),
+                                                ? Color(0xffFFE77B)
+                                                : Color(0xff337DFF))),
                                   )
                                 ],
                               ),

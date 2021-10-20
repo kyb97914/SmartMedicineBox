@@ -82,7 +82,7 @@ class _RegisterHubState extends State<RegisterHub> {
                   border: Border.all(),
                 ),
                 child: TextField(
-                  controller: medicineHubHostController,
+                  controller: medicineHubIDController,
                   decoration: InputDecoration(
                     icon: Icon(
                       Icons.device_hub,
@@ -119,7 +119,7 @@ class _RegisterHubState extends State<RegisterHub> {
                   border: Border.all(),
                 ),
                 child: TextField(
-                  controller: medicineHubIDController,
+                  controller: medicineHubHostController,
                   decoration: InputDecoration(
                     icon: Icon(
                       Icons.device_hub,

@@ -17,6 +17,7 @@ class BottleWeight extends StatefulWidget {
 
 class _BottleWeighteState extends State<BottleWeight> {
   Future<String> patchWeight() async {
+    print('patch');
     String usertoken = await UserSecureStorage.getUserToken();
     String bottleid = await UserSecureStorage.getBottleId();
     http.Response response = await http.patch(
@@ -44,10 +45,10 @@ class _BottleWeighteState extends State<BottleWeight> {
             child: Container(
               width: size.width * 0.9,
               height: size.height * 0.9,
-              decoration: BoxDecoration(border: Border.all()),
+              
               child: Column(
                 children: [
-                  SizedBox(height: 30),
+                  SizedBox(height: 100),
                   Text(
                     '약병 무게 측정',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -55,7 +56,7 @@ class _BottleWeighteState extends State<BottleWeight> {
                   SizedBox(height: 30),
                   Center(
                     child: Text(
-                      '약병에 아무것도 두지 않은 채로 측정 버튼을 눌러 주세요',
+                      '약병에 약을 둔 상태로 측정 버튼을 눌러 주세요',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
@@ -65,8 +66,12 @@ class _BottleWeighteState extends State<BottleWeight> {
                     text: "측정",
                     color: Colors.blue.shade600,
                     press: () {
-                      return AlertDialog(
-                        title: new Text('담당의 등록'),
+                      print('asdf');
+                      showDialog(
+                          context: context,
+                                  builder: (BuildContext context) {
+                                        return AlertDialog(
+                        title: new Text('약병 등록'),
                         content: FutureBuilder(
                           future: patchWeight(),
                           builder:
@@ -89,10 +94,13 @@ class _BottleWeighteState extends State<BottleWeight> {
                         actions: <Widget>[
                           new FlatButton(
                             child: new Text('Close'),
-                            onPressed: () {},
+                            onPressed: () { Navigator.of(context).pop();},
                           ),
                         ],
                       );
+                                  }
+                      );
+                    
                     },
                   ),
                 ],

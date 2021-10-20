@@ -99,6 +99,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
   Future<void> _naverLogin() async {
     NaverLoginResult res = await FlutterNaverLogin.logIn();
     NaverAccessToken tokens = await FlutterNaverLogin.currentAccessToken;
+    print(token);
     _socialSignupInfo['type'] = 'naver';
     _socialSignupInfo['accesstoken'] = tokens.accessToken;
   }
@@ -143,6 +144,8 @@ class _SignUpLocalState extends State<SignUpLocal> {
         },
       ),
     );
+    print(response.statusCode);
+    print('asdg');
     if (response.statusCode == 201) {
       return "정보 입력 완료";
     } else {
@@ -371,6 +374,7 @@ class _SignUpLocalState extends State<SignUpLocal> {
                             await _naverLogin();
                             String savemessage = await signup_Social();
                             if (savemessage == "정보 입력 완료") {
+                              print('asdfg');
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
